@@ -33,3 +33,16 @@ msgstr ""
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:66
 msgid "Go to Installer"
 msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:67
+msgid "Select all"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:68
+msgid "Select none"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
+msgid "Save list"
+msgstr ""

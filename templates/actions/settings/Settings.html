@@ -10,6 +10,18 @@
         -ms-box-shadow:inset 0px 0px 0px 1px #7D6A6A;
         box-shadow:inset 0px 0px 0px 1px #7D6A6A;}
     span {color: lightgray;}
+    .s-plugmein-panel{
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        box-shadow: 0 -6px 10px -10px #AAAAAA;
+        z-index: 1052;
+        padding-left: 40%;
+    }
+    .right{float:right}
 </style>
 <script type="text/javascript">
     function plugmein_sendform(state){
@@ -17,10 +29,13 @@
         url = $form.attr( "action" ),
         csrf = $('[name=_csrf]').attr("value");
         searchIDs = $('#plugmein-form input[type="checkbox"]:checked').map(function(){return this.id;});
-        var posting = $.post( url, {_csrf:csrf,state:state,plugins:searchIDs.get()});
-        posting.done(function( data ) {
-            if (data!='OK') $('#plugmein-error').empty().append( data );
-            else location.reload(true);
+        var posting = $.post( url, {_csrf:csrf,state:state,plugins:searchIDs.get(),id:"run",});
+        posting
+        .success(function( data ) {
+            location.reload(true);
+        })
+        .fail(function(){
+            $('#plugmein-error').empty().append( data );
         });
     };
 
@@ -34,7 +49,7 @@
     $('#plugmein-checkAll').click(function(){$('#plugmein-form input[type="checkbox"]').prop('checked', true);});
     $('#plugmein-uncheckAll').click(function(){$('#plugmein-form input[type="checkbox"]').prop('checked', false);});
     $('#s-plugmein-form').click(function(){
-    if ($("#plugmein-form input:checkbox:checked").length > 0)
+    if ($("input[type=checkbox]:checked","#plugmein-form").length > 0)
         {
             $('#plugmein-enable').prop( "disabled", false );
             $('#plugmein-disable').prop( "disabled", false );
@@ -44,7 +59,7 @@
         {
             $('#plugmein-disable').prop( "disabled", true );
             $('#plugmein-enable').prop( "disabled", true );
-            $('#plugmein-uncheckAll').prop( "disabled", true );         
+            $('#plugmein-uncheckAll').prop( "disabled", true );
         }
     });
     </script>
@@ -52,23 +67,26 @@
 <div id="s-plugmein-form" class="plugmein">
      <h2>{_wp('Plugin Manager')}</h2>
     <span id="plugmein-error"></span>
-    <button class="button" id="plugmein-checkAll">☑</button> | 
-    <button class="button" id="plugmein-uncheckAll" disabled>☐</button>
+    <button class="button" id="plugmein-checkAll" title="[`Select all`]">☑</button> | 
+    <button class="button" id="plugmein-uncheckAll" disabled title="[`Select none`]">☐</button>
+    <a href="?plugin=plugmein&id=savelist" class="right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
     <hr class="plugmein">
     {if empty($plugin_list)} 
         <h3>{_wp('No plugins available.')}</h3>
     {else}
-         <form id="plugmein-form" method="POST" action="?plugin=plugmein&action=run">
+         <form id="plugmein-form" method="POST" action="?plugin=plugmein">
         {$wa->csrf()}
          <ul class="zebra plugmein">
              {foreach $plugin_list as $plugin}
-                      <li class="{if !$plugin.active}disabled{/if}"><input type="checkbox" id="{$plugin.id}" value="1"><label for="{$plugin.id}">&nbsp;{$plugin.name}&nbsp;<span>{$plugin.description}</span></label>{if $installer}<span style="
+                      <li class="{if !$plugin.active}disabled{/if}"><input type="checkbox" id="{$plugin.id}" value="1"><label for="{$plugin.id}">&nbsp;{$plugin.name|default:$plugin.id}&nbsp;<span>{$plugin.description|default:''}</span></label>{if $installer}<span style="
     float: right;"><a title="{$plugin.name}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span>{/if}</li>
              {/foreach}
          </ul>
          </form>
      {/if}
      <hr class="plugmein">
+    <div class="block bordered-top s-plugmein-panel">
     <button class="button green" id="plugmein-enable" disabled>{_wp('Enable')}</button> | 
     <button class="button red" id="plugmein-disable" disabled>{_wp('Disable')}</button>
+    </div>
 </div>
