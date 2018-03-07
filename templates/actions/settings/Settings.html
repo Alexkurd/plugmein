@@ -1,92 +1,81 @@
-{literal}
 <style>
-    ul.plugmein {list-style-type: none;font-weight: bold;}
-    hr.plugmein{clear:none;}
-    li.disabled {color:gray; text-decoration:line-through;}
-    .plugmein li:hover {
-        -webkit-box-shadow:inset 0px 0px 0px 1px #7D6A6A;
-        -moz-box-shadow:inset 0px 0px 0px 1px #7D6A6A;
-        -o-box-shadow:inset 0px 0px 0px 1px #7D6A6A;
-        -ms-box-shadow:inset 0px 0px 0px 1px #7D6A6A;
-        box-shadow:inset 0px 0px 0px 1px #7D6A6A;}
-    span {color: lightgray;}
-    .s-plugmein-panel{
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        box-shadow: 0 -6px 10px -10px #AAAAAA;
-        z-index: 1052;
-        padding-left: 40%;
-    }
-    .right{float:right}
+hr.plugmein { clear: none;}
+.disabled { color: gray;text-decoration: line-through;}
+.plugmein tr:hover { box-shadow: inset 0px 0px 0px 1px #7D6A6A;}
+.s-plugmein-panel { display: block;position: fixed;bottom: 0;left: 0;right: 0;background: #fff;box-shadow: 0 -6px 10px -10px #AAAAAA;z-index: 1052;padding-left: 40%;}
 </style>
-<script type="text/javascript">
-    function plugmein_sendform(state){
-        var $form = $('#plugmein-form'),
-        url = $form.attr( "action" ),
-        csrf = $('[name=_csrf]').attr("value");
-        searchIDs = $('#plugmein-form input[type="checkbox"]:checked').map(function(){return this.id;});
-        var posting = $.post( url, {_csrf:csrf,state:state,plugins:searchIDs.get(),id:"run",});
-        posting
-        .success(function( data ) {
-            location.reload(true);
-        })
-        .fail(function(){
-            $('#plugmein-error').empty().append( data );
-        });
-    };
-
-    $('#plugmein-enable').click(function(id){
-        plugmein_sendform(1);
-    });
-    $('#plugmein-disable').click(function(id){
-        plugmein_sendform(0);
-    });
-
-    $('#plugmein-checkAll').click(function(){$('#plugmein-form input[type="checkbox"]').prop('checked', true);});
-    $('#plugmein-uncheckAll').click(function(){$('#plugmein-form input[type="checkbox"]').prop('checked', false);});
-    $('#s-plugmein-form').click(function(){
-    if ($("input[type=checkbox]:checked","#plugmein-form").length > 0)
-        {
-            $('#plugmein-enable').prop( "disabled", false );
-            $('#plugmein-disable').prop( "disabled", false );
-            $('#plugmein-uncheckAll').prop( "disabled", false );
-        }
-        else
-        {
-            $('#plugmein-disable').prop( "disabled", true );
-            $('#plugmein-enable').prop( "disabled", true );
-            $('#plugmein-uncheckAll').prop( "disabled", true );
-        }
-    });
-    </script>
-{/literal}
 <div id="s-plugmein-form" class="plugmein">
-     <h2>{_wp('Plugin Manager')}</h2>
-    <span id="plugmein-error"></span>
-    <button class="button" id="plugmein-checkAll" title="[`Select all`]">☑</button> | 
-    <button class="button" id="plugmein-uncheckAll" disabled title="[`Select none`]">☐</button>
-    <a href="?plugin=plugmein&id=savelist" class="right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
+    <h2>[`Plugin Manager`]</h2>
+    <span id = "plugmein-error"></span>
+    <button class = "button" id="plugmein-checkAll" title="[`Select all`]">☑</button>| 
+    <button class = "button" id="plugmein-uncheckAll" title="[`Select none`]">☐</button>
+    <a href="?plugin=plugmein&id=savelist" class="float-right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
     <hr class="plugmein">
-    {if empty($plugin_list)} 
-        <h3>{_wp('No plugins available.')}</h3>
+    <form id="plugmein-form" method="POST" action="?plugin=plugmein"> 
+    {if empty($plugin_list)}
+        <h3> [`No plugins available`]</h3> 
     {else}
-         <form id="plugmein-form" method="POST" action="?plugin=plugmein">
         {$wa->csrf()}
-         <ul class="zebra plugmein">
-             {foreach $plugin_list as $plugin}
-                      <li class="{if !$plugin.active}disabled{/if}"><input type="checkbox" id="{$plugin.id}" value="1"><label for="{$plugin.id}">&nbsp;{$plugin.name|default:$plugin.id}&nbsp;<span>{$plugin.description|default:''}</span></label>{if $installer}<span style="
-    float: right;"><a title="{$plugin.name}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span>{/if}</li>
-             {/foreach}
-         </ul>
-         </form>
-     {/if}
-     <hr class="plugmein">
-    <div class="block bordered-top s-plugmein-panel">
-    <button class="button green" id="plugmein-enable" disabled>{_wp('Enable')}</button> | 
-    <button class="button red" id="plugmein-disable" disabled>{_wp('Disable')}</button>
-    </div>
+        <table class="zebra plugmein"> 
+            {foreach $plugin_list as $plugin}
+                <tr {if !$plugin.active}class="disabled"{/if}>
+                    <td><input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1" {if $plugin.active}checked="checked"{/if}></td>
+                    <td><label for="{$plugin.id}">&nbsp;{$plugin.name|default: $plugin.id}&nbsp;<span> {$plugin.description|default: ''}</span></label></td>
+                    {if $installer}
+                    <td><span style="float: right;"><a title="{$plugin.name|default: $plugin.id}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span></td>
+                    {/if}
+                </tr>
+            {/foreach}
+        </table> {/if}
+        <hr class="plugmein">
+        <div class="block bordered-top s-plugmein-panel">
+            <input type="submit" class="green button" value="[`Save`]">
+        </div>
+    </form>
 </div>
+
+<div>
+    <h2>[`Hooks`]</h2>
+    <table class="zebra">
+        {foreach $handlers as $hook => $plugin}
+            <tr>
+                <td>{$hook}</td>
+                <td>{if is_array($plugin)}
+                    {foreach $plugin as $handler}
+                        {$plugin_list[$handler].name|default:$plugin_list[$handler].id}<br>
+                    {/foreach}
+                {else}
+                    {$plugin_list[$plugin].name|default:$plugin_list[$plugin].id}
+                {/if}
+                </td>
+            </tr>
+        {/foreach}
+    </table>
+</div>
+<script>
+/*global $*/
+
+    $('#plugmein-checkAll').click(function() {
+        $('#plugmein-form input[type="checkbox"]').prop('checked', true);
+    });
+
+    $('#plugmein-uncheckAll').click(function() {
+        $('#plugmein-form input[type="checkbox"]').prop('checked', false);
+    });
+
+    $('#plugmein-form').on('submit', function(e){
+        e.preventDefault();
+        var fields = $(this).serializeArray();
+        fields.push({ "name": 'id', "value": 'run'});
+        /* Because serializeArray() ignores unset checkboxes and radio buttons: */
+        fields = fields.concat(
+                $('input[type=checkbox]:not(:checked)', $(this)).map(
+                        function() {
+                            return { "name": this.name, "value": 0};
+                        }).get()
+        );
+        $.post($(this).attr('action'), fields).done(function(){
+            $.plugins.dispatch('#/plugmein/', true);
+        });
+    });
+</script>

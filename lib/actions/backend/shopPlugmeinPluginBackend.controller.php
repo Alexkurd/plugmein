@@ -18,26 +18,23 @@ class shopPlugmeinPluginBackendController extends waJsonController
     private function saveList()
     {
         $app_config = wa()->getConfig()->getAppConfig('shop');
-        $path=$app_config->getConfigPath('plugins.php', true);
+        $path = $app_config->getConfigPath('plugins.php', true);
         waFiles::readFile($path, "plugins.txt");
     }
     
     private function generateConfig()
     {
-        
-        $options = waRequest::post();
-        $state = $options['state'];
-        $plugins = $options['plugins'];
-        
-        $app_config = wa()->getConfig()->getAppConfig('shop');
-        $path=$app_config->getConfigPath('plugins.php', true);
-        $plugin_php = include $path;
-        $state = ifset($state, false);
-
-        foreach ($plugins as $plugin) {
-            $plugin_php[$plugin]=$state;
+        $plugins = waRequest::post();
+        unset($plugins['id']);
+        foreach ($plugins as &$value) {
+            $value = (bool) $value;
         }
-        unset($plugin);
+        $app_config = wa()->getConfig()->getAppConfig('shop');
+        $path = $app_config->getConfigPath('plugins.php', true);
+        $plugin_php = include $path;
+        foreach ($plugins as $plugin => $state) {
+            $plugin_php[$plugin] = $state;
+        }
         waUtils::varExportToFile($plugin_php, $path, true);
         if (wa()->appExists('installer')) {
             wa('installer');

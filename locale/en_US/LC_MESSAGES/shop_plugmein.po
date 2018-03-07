@@ -46,3 +46,15 @@ msgstr ""
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
 msgid "Save list"
 msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:16
+msgid "No plugins available"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:32
+msgid "Save"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:38
+msgid "Hooks"
+msgstr ""
