@@ -13,6 +13,9 @@ class shopPlugmeinPluginBackendRunAction extends waViewAction
         }
         unset($plugin);
         waUtils::varExportToFile($plugin_php, $path, true);
+        if (wa()->appExists('installer')) {
+            wa('installer');
+            installerHelper::flushCache();}
     }
     
     public function execute()

@@ -1,9 +1,9 @@
 1a8c121639fdd62284c50cafe5598893 *css/plugmein.css
 b649683a49483cc1f3bb998b4269e9ef *img/plugmein.png
 a1751e1f10a3b96b05d0401c97e72008 *lib/.htaccess
-16abb798f85dc83ee1ca753da1d70249 *lib/actions/backend/shopPlugmeinPluginBackendRun.action.php
+90bdf50cb7282a6a118b5dd98b83ab1a *lib/actions/backend/shopPlugmeinPluginBackendRun.action.php
 957c5a7e66654f7452eddfd75300b28a *lib/actions/shopPlugmeinPluginSettings.action.php
-017bebaefc3924a35cc1a30caccfd58e *lib/config/plugin.php
+371b03c06d6ba53f2f26e514a70e7fc4 *lib/config/plugin.php
 7eee87d01ad7a71449856554386724f1 *lib/config/requirements.php
 0819a3b2be92e5e6d7b592dfc7ae7869 *lib/shopPlugmein.plugin.php
 a1751e1f10a3b96b05d0401c97e72008 *locale/.htaccess
