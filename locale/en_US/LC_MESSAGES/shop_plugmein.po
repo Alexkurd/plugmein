@@ -29,3 +29,7 @@ msgstr ""
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:49
 msgid "No plugins available."
 msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:66
+msgid "Go to Installer"
+msgstr ""

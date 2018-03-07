@@ -21,7 +21,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         if (!$this->getUser()->getRights('shop', 'settings')) {
             throw new waException(_w('Access denied'));
         }
-        
+        $installer = ($this->getUser()->getRights('installer', 'settings')&&wa()->appExists('installer'));
         $plugin_info=array();
         $app_config=wa()->getConfig()->getAppConfig('shop');
         $path=$app_config->getConfigPath('plugins.php', true);
@@ -38,5 +38,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         }
         unset($plugin);
         $this->view->assign('plugin_list', $plugin_info);
+        $this->view->assign('installer', $installer);
+        
     }
 }
