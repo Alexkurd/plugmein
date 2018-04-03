@@ -39,7 +39,6 @@ msgid "Select none"
 msgstr "Снять выделение"
 
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
-#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:16
 msgid "No plugins available"
 msgstr "Нет доступных плагинов"
@@ -51,3 +50,28 @@ msgstr "Сохранить"
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:38
 msgid "Hooks"
 msgstr "Хуки"
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:12
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:69
+msgid "Save list"
+msgstr "Сохранить список"
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:17
+msgid "Plugins"
+msgstr "Плагины"
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:23
+msgid "Diagnose"
+msgstr "Диагностика"
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:74
+msgid "Start"
+msgstr "Начать"
+
+#: /wa-apps/shop/plugins/plugmein/lib/actions/backend/shopPlugmeinPluginBackendCheck.controller.php:151
+msgid "Something wrong"
+msgstr "Что-то не так"
+
+#: /wa-apps/shop/plugins/plugmein/lib/actions/backend/shopPlugmeinPluginBackendCheck.controller.php:158
+msgid "All files are correct"
+msgstr "Все файлы корректны"

@@ -6,15 +6,11 @@ hr.plugmein { clear: none;}
 </style>
 <div id="s-plugmein-form" class="plugmein">
     <h2>[`Plugin Manager`]</h2>
-    <span id = "plugmein-error"></span>
-    <button class = "button" id="plugmein-checkAll" title="[`Select all`]">☑</button>| 
-    <button class = "button" id="plugmein-uncheckAll" title="[`Select none`]">☐</button>
-    <a href="?plugin=plugmein&id=savelist" class="float-right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
-    <hr class="plugmein">
     <div class="block fields form">
+        <span id = "plugmein-error"></span>
         <ul class="tabs">
             <li>
-                <a href="#" data-tab-id ='plugins'>[`Plugins`]</a>
+                <a href="#" data-tab-id ='plugins'>[s`Plugins`]</a>
             </li>
             <li>
                 <a href="#" data-tab-id ='hooks'>[`Hooks`]</a>
@@ -26,6 +22,10 @@ hr.plugmein { clear: none;}
         <div class="tab-content">
             <!--plugins.tab-->
             <div class="block" data-tabcontent-id="plugins">
+                <button class = "button" id="plugmein-checkAll" title="[`Select all`]">☑</button>| 
+                <button class = "button" id="plugmein-uncheckAll" title="[`Select none`]">☐</button>
+                <a href="?plugin=plugmein&id=savelist" class="float-right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
+                <hr class="plugmein">
                 <form id="plugmein-form" method="POST" action="?plugin=plugmein"> 
                 {if empty($plugin_list)}
                     <h3> [`No plugins available`]</h3> 
@@ -37,7 +37,7 @@ hr.plugmein { clear: none;}
                                 <td><input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1" {if $plugin.active}checked="checked"{/if}></td>
                                 <td><label for="{$plugin.id}">&nbsp;{$plugin.name|default: $plugin.id}&nbsp;<span> {$plugin.description|default: ''}</span></label></td>
                                 {if $installer}
-                                <td><span style="float: right;"><a title="{$plugin.name|default: $plugin.id}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span></td>
+                                <td class="nowrap"><span class="float-right"><a title="{$plugin.name|default: $plugin.id}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span></td>
                                 {/if}
                             </tr>
                         {/foreach}
@@ -69,7 +69,11 @@ hr.plugmein { clear: none;}
                 </table>
             </div>
             <!--diag.tab-->
-            <div class="block" data-tabcontent-id="diag"></div>
+            <div class="block" data-tabcontent-id="diag">
+                <script src="{$wa_app_static_url}plugins/diag/js/kmlongaction.js" type="text/javascript"></script>
+                <input type="button" class="button green" id="diag-run-check" value="[`Start`]" />
+                <img id="diag-loading-check" style="margin-top:8px; display: none" src="{$wa_url}wa-content/img/loading32.gif">
+            </div>
         </div>
     </div>
 </div>
@@ -77,13 +81,14 @@ hr.plugmein { clear: none;}
 <script>
 /*global $*/
     
-    $('#s-plugmein-form').on('click', 'a[data-tab-id]', function(e){
-            e.preventDefault();
-            $('a[data-tab-id]').parent().removeClass('selected');
-            $(this).parent().addClass('selected');
-            $('div[data-tabcontent-id]','.tab-content').hide();
-            $('div[data-tabcontent-id='+$(this).data('tab-id')+']','.tab-content').show();
-        });
+    $('#s-plugmein-form').on('click', 'a[data-tab-id]', function(e) {
+        e.preventDefault();
+        $('a[data-tab-id]').parent().removeClass('selected');
+        $(this).parent().addClass('selected');
+        $('div[data-tabcontent-id]','.tab-content').hide();
+        $('div[data-tabcontent-id='+$(this).data('tab-id')+']','.tab-content').show();
+    });
+    
     $('a[data-tab-id]:first','#s-plugmein-form').trigger('click');
     
     $('#plugmein-checkAll').click(function() {
@@ -107,6 +112,27 @@ hr.plugmein { clear: none;}
         );
         $.post($(this).attr('action'), fields).done(function(){
             $.plugins.dispatch('#/plugmein/', true);
+        });
+    });
+    
+    $("#diag-run-check").click(function (e) {
+        $.wa.kmLongAction().start({
+            process_url: '?plugin=plugmein&action=check',
+            debug: true,
+            start: {
+                onStart: function () {
+                    $('.errormsg','[data-tabcontent-id="diag"]').empty();
+                    $("#diag-run-check").hide();
+                    $("#diag-loading-check").show();
+                }
+            },
+            step: {
+                onReady: function (response) {
+                    $("#diag-run-check").after(response.report);
+                    $("#diag-loading-check").hide();
+                    $("#diag-run-check").show();
+                }
+            }
         });
     });
 </script>
