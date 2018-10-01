@@ -49,7 +49,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         $md5 = md5(json_encode($plugin_all).filemtime($path));
         $cache = wa('shop')->getCache();
         if (!$cache || !($cache instanceof waCache)) {
-            $cache = new waCache(new waFileCacheAdapter([]), 'shop_plugmein');
+            $cache = new waCache(new waFileCacheAdapter(array()), 'shop_plugmein');
         }
         $handlers_raw = $cache->get('handlers_'.$md5);
         $plugin_info = $cache->get('info_'.$md5);
