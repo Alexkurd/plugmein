@@ -2,7 +2,7 @@
 return array (
   'name' => /*_wp*/'PlugMein',
   'icon' => 'img/plugmein.png',
-  'version' => '2.0',
+  'version' => '2.5.2',
   'vendor' => '991739',
   'description' => 'Plugin Manager',
   'shop_settings' => true,

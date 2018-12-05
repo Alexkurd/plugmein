@@ -58,3 +58,23 @@ msgstr ""
 #: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:38
 msgid "Hooks"
 msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:17
+msgid "Plugins"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:23
+msgid "Diagnose"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/templates/actions/settings/Settings.html:74
+msgid "Start"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/lib/actions/backend/shopPlugmeinPluginBackendCheck.controller.php:151
+msgid "Something wrong"
+msgstr ""
+
+#: /wa-apps/shop/plugins/plugmein/lib/actions/backend/shopPlugmeinPluginBackendCheck.controller.php:158
+msgid "All files are correct"
+msgstr ""

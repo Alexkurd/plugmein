@@ -35,7 +35,6 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         if (!$this->getUser()->getRights('shop', 'settings')) {
             throw new waException(_w('Access denied'));
         }
-        $installer = ($this->getUser()->getRights('installer', 'settings')&&wa()->appExists('installer'));
         $plugin_info = array();
         $app_config = wa()->getConfig()->getAppConfig('shop');
         $path = $app_config->getConfigPath('plugins.php', true);
@@ -46,25 +45,36 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
             $unlisted = array_combine(array_keys($unlisted), array_fill(0, count($unlisted), false));
             $plugin_php = array_merge($plugin_php, $unlisted);
         }
-        $this->view->assign('app_config', $app_config->getPluginPath('plugmein'));
-        $plugin_path = wa()->getAppStaticUrl('shop', true).'plugins/plugmein';
-        $this->view->assign(compact('plugin_path', 'unlisted'));
-        $handlers_raw = array();
-        foreach ($plugin_php as $key => $state) {
-            if ($key!='plugmein') {
-                $plugin_info[$key] = $this->getOffInfo($key);
-                $plugin_info[$key]['id'] = $key;
-                $plugin_info[$key]['active'] = $state;
-                if (!empty($plugin_info[$key]['handlers'])) {
-                    $handlers[$key] = array_fill_keys(array_keys($plugin_info[$key]['handlers']), $key);
-                    $handlers_raw = array_merge_recursive($handlers[$key], $handlers_raw);
+        //Cache for 1 hour
+        $md5 = md5(json_encode($plugin_all).filemtime($path));
+        $cache = wa('shop')->getCache();
+        if (!$cache || !($cache instanceof waCache)) {
+            $cache = new waCache(new waFileCacheAdapter(array()), 'shop_plugmein');
+        }
+        $handlers_raw = $cache->get('handlers_'.$md5);
+        $plugin_info = $cache->get('info_'.$md5);
+        if (empty($plugin_info) || empty($handlers_raw)) {
+            $handlers_raw = array();
+            foreach ($plugin_php as $key => $state) {
+                if ($key!='plugmein') {
+                    $plugin_info[$key] = $this->getOffInfo($key);
+                    $plugin_info[$key]['id'] = $key;
+                    $plugin_info[$key]['active'] = $state;
+                    if (!empty($plugin_info[$key]['handlers'])) {
+                        $handlers[$key] = array_fill_keys(array_keys($plugin_info[$key]['handlers']), $key);
+                        $handlers_raw = array_merge_recursive($handlers[$key], $handlers_raw);
+                    }
                 }
             }
+            unset($plugin);
+            ksort($handlers_raw);
+            $cache->set('handlers_'.$md5, $handlers_raw, 3600);
+            $cache->set('info_'.$md5, $plugin_info, 3600);
         }
-        unset($plugin);
-        ksort($handlers_raw);
         $this->view->assign('handlers', $handlers_raw);
         $this->view->assign('plugin_list', $plugin_info);
+        //Check installer rights
+        $installer = ($this->getUser()->getRights('installer', 'settings')&&wa()->appExists('installer'));
         $this->view->assign('installer', $installer);
     }
 }
