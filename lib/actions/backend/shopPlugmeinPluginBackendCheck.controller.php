@@ -37,6 +37,7 @@ class shopPlugmeinPluginBackendCheckController extends waLongActionController
         $root = wa()->getConfig()->getRootPath();
         $finder
             ->files()
+            ->name('*.php')
             ->ignoreDotFiles(false)
             ->ignoreUnreadableDirs()
             ->in($root.DIRECTORY_SEPARATOR.'wa-apps')
