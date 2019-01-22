@@ -6,10 +6,18 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
 {
+    public static $files = array (
+        '7745382c92b7799bf1294b1f43023ba2' => __DIR__ . '/..' . '/tracy/tracy/src/shortcuts.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
             'Symfony\\Component\\Finder\\' => 25,
+        ),
+        'D' => 
+        array (
+            'Dzegarra\\TracyMysqli\\' => 21,
         ),
     );
 
@@ -18,6 +26,28 @@ class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
+        'Dzegarra\\TracyMysqli\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dzegarra/tracy-mysqli/src',
+        ),
+    );
+
+    public static $classMap = array (
+        'SqlFormatter' => __DIR__ . '/..' . '/jdorn/sql-formatter/lib/SqlFormatter.php',
+        'Tracy\\Bar' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Bar.php',
+        'Tracy\\BlueScreen' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/BlueScreen.php',
+        'Tracy\\Bridges\\Nette\\Bridge' => __DIR__ . '/..' . '/tracy/tracy/src/Bridges/Nette/Bridge.php',
+        'Tracy\\Bridges\\Nette\\MailSender' => __DIR__ . '/..' . '/tracy/tracy/src/Bridges/Nette/MailSender.php',
+        'Tracy\\Bridges\\Nette\\TracyExtension' => __DIR__ . '/..' . '/tracy/tracy/src/Bridges/Nette/TracyExtension.php',
+        'Tracy\\Debugger' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Debugger.php',
+        'Tracy\\DefaultBarPanel' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/DefaultBarPanel.php',
+        'Tracy\\Dumper' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Dumper.php',
+        'Tracy\\FireLogger' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/FireLogger.php',
+        'Tracy\\Helpers' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Helpers.php',
+        'Tracy\\IBarPanel' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/IBarPanel.php',
+        'Tracy\\ILogger' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/ILogger.php',
+        'Tracy\\Logger' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Logger.php',
+        'Tracy\\OutputDebugger' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/OutputDebugger.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -25,6 +55,7 @@ class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2::$classMap;
 
         }, null, ClassLoader::class);
     }

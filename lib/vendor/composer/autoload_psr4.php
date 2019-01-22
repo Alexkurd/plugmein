@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
+    'Dzegarra\\TracyMysqli\\' => array($vendorDir . '/dzegarra/tracy-mysqli/src'),
 );
