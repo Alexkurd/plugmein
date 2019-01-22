@@ -6,7 +6,6 @@ use Tracy\Debugger;
 
 class shopPlugmeinPlugin extends shopPlugin
 {
-
     public static $eventTiming;
 
     public function routingHook()
@@ -25,7 +24,6 @@ class shopPlugmeinPlugin extends shopPlugin
 
             $init = true;
         }
-
     }
 
     public function headHook()
@@ -41,21 +39,19 @@ class shopPlugmeinPlugin extends shopPlugin
 
     private function traceMysql()
     {
-
         $panel = new \Dzegarra\TracyMysqli\BarPanel();
         Debugger::getBar()->addPanel($panel);
     }
 
     /**
      * @param $source
-     * @param $template Smarty_Internal_Template
+     * @param Smarty_Internal_Template $template
      * @return mixed
      */
     public static function traceSmarty($source, $template)
     {
-        if ($template->template_resource == 'file:index.html') {
+        if ($template->template_resource === 'file:index.html') {
             shopPlugmeinPluginSmartyTrace::$ptr = Smarty_Internal_Debug::get_debug_vars($template);
-
             $panel = new shopPlugmeinPluginSmartyTrace();
             Debugger::getBar()->addPanel($panel);
         }
@@ -63,6 +59,10 @@ class shopPlugmeinPlugin extends shopPlugin
         return $source;
     }
 
+    /**
+     * @param bool $init
+     * @throws waException
+     */
     private function traceEvent($init = true)
     {
         if ($init) {
@@ -75,24 +75,20 @@ class shopPlugmeinPlugin extends shopPlugin
             $re = '/Recorded.*?(array.*?)===/ms';
             preg_match_all($re, $log, $matches);
             foreach ($matches[1] as $match) {
-//                $result[] = VarExportParser::parse($match . ';');
-//                $result[] = wa_lambda('', 'return ' . $match . ';');
                 self::$eventTiming[] = eval('return ' . $match . ';');
             }
-
-//            dump(self::$eventTiming);
-
             waFiles::delete(waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.log');
         }
-
     }
 
+    /**
+     * @return bool|void
+     */
     private function installConfigHack()
     {
         $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
         $config = file_get_contents($config_path);
-        if ($config === false || $config === '')
-        {
+        if ($config === false || $config === '') {
             return false;
         }
         if (false !== strpos($config, 'plugmein')) {
@@ -122,5 +118,4 @@ class shopPlugmeinPlugin extends shopPlugin
     {
 
     }
-
 }
