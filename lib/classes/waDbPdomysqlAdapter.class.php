@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-class waDbPdomysqlAdapter extends waDbMysqliAdapter
+class waDbPdomysqlAdapter extends waDbAdapter
 {
 
     /**
@@ -13,11 +13,11 @@ class waDbPdomysqlAdapter extends waDbMysqliAdapter
     public function connect($settings)
     {
         $host = $settings['host'];
-        $port = isset($settings['port']) ? $settings['port'] : ini_get("mysqli.default_port");
+        $port = isset($settings['port']) ? $settings['port'] : 3306;
         $dbname = $settings['database'];
         $charset = isset($settings['charset']) ? $settings['charset'] : 'utf8';
         try {
-            $handler = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=$charset", $settings['user'],$settings['password']);
+            $handler = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=$charset", $settings['user'], $settings['password']);
             $handler->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true); // so it is MYSQL only now
         } catch (PDOException $e) {
             throw new waDbException($e->getMessage());
@@ -37,7 +37,7 @@ class waDbPdomysqlAdapter extends waDbMysqliAdapter
                         $this->close();
                         sleep(1);
                         $this->handler = $this->connect($this->settings);
-                        $ping = $this->handler->ping();
+                        $ping = $this->ping();
                     }
                     $r = $ping ? @$this->handler->query($query) : false;
                     break;
@@ -144,9 +144,67 @@ class waDbPdomysqlAdapter extends waDbMysqliAdapter
         // TODO
     }
 
-    public function createTable($table, $data)
+    public function createTable($table, $data)  // same as waDbMysqliAdapter
     {
-        // TODO
+        $fields = array();
+        foreach ($data as $field_id => $field) {
+            if (substr($field_id, 0, 1) != ':') {
+                $type = $field['type'].(!empty($field['params']) ? '('.$field['params'].')' : '');
+                foreach (array('unsigned', 'zerofill') as $k) {
+                    if (!empty($field[$k])) {
+                        $type .= ' '.strtoupper($k);
+                    }
+                }
+                if (isset($field['null']) && !$field['null']) {
+                    $type .= ' NOT NULL';
+                } elseif (in_array(strtolower($field['type']), array('timestamp'))) {
+                    $type .= ' NULL';
+                }
+                if (isset($field['default'])) {
+                    if ($field['default'] == 'CURRENT_TIMESTAMP') {
+                        $type .= " DEFAULT ".$field['default'];
+                    } else {
+                        $type .= " DEFAULT '".$field['default']."'";
+                    }
+                }
+                if (!empty($field['autoincrement'])) {
+                    $type .= ' AUTO_INCREMENT';
+                }
+                $fields[] = $this->escapeField($field_id)." ".$type;
+            }
+        }
+        $keys = array();
+        foreach ($data[':keys'] as $key_id => $key) {
+            if ($key_id == 'PRIMARY') {
+                $k = "PRIMARY KEY";
+            } else {
+                $index_type = '';
+                foreach (array('unique', 'fulltext', 'spatial') as $tk) {
+                    if (!empty($key[$tk])) {
+                        $index_type = strtoupper($tk).' ';
+                        break;
+                    }
+                }
+                $k = $index_type."KEY ".$this->escapeField($key_id);
+            }
+            $key_fields = array();
+            foreach ($key['fields'] as $f) {
+                if (is_array($f)) {
+                    $key_fields[] = $this->escapeField($f[0])." (".$f[1].")";
+                } else {
+                    $key_fields[] = $this->escapeField($f);
+                }
+            }
+            $keys[] = $k." (".implode(', ', $key_fields).')';
+        }
+        $sql = "CREATE TABLE IF NOT EXISTS ".$table." (".implode(",\n", $fields);
+        if ($keys) {
+            $sql .= ", ".implode(",\n", $keys);
+        }
+        $sql .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8";
+        if (!$this->query($sql)) {
+            $this->exception();
+        }
     }
 
     protected function exception()
