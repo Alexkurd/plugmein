@@ -108,7 +108,7 @@ class waDbPdomysqlAdapter extends waDbAdapter
      */
     public function fetch_assoc($result)
     {
-        return $result->fetchAll(PDO::FETCH_ASSOC);
+        return $result->fetch(PDO::FETCH_ASSOC);
     }
 
     public function insert_id()
@@ -123,7 +123,11 @@ class waDbPdomysqlAdapter extends waDbAdapter
 
     public function escape($string)
     {
-        return $this->handler->quote($string);
+        $s = $this->handler->quote($string);   // MY BAD
+        if (strpos($s, "'") === 0) {
+            $s = substr($s, 1, -1);
+        }
+        return $s;
     }
 
     /**
@@ -141,7 +145,65 @@ class waDbPdomysqlAdapter extends waDbAdapter
 
     public function schema($table, $keys = false)
     {
-        // TODO
+        $res = $this->query("DESCRIBE ".$table);
+        if (!$res) {
+            $this->exception();
+        }
+        $result = array();
+        while ($row = $this->fetch_assoc($res)) {
+            $field = array();
+            $i = strpos($row['Type'], '(');
+            if ($i === false) {
+                $field['type'] = $row['Type'];
+            } else {
+                $field['type'] = substr($row['Type'], 0, $i);
+                $field['params'] = substr($row['Type'], $i + 1, strpos($row['Type'], ')') - $i - 1);
+                if (strpos($row['Type'], ')') != strlen($row['Type']) - 1) {
+                    $field[trim(substr($row['Type'], strpos($row['Type'], ')') + 1))] = 1;
+                }
+            }
+            if ($row['Null'] != 'YES') {
+                $field['null'] = 0;
+            }
+
+            if ($row['Default'] !== null) {
+                $field['default'] = $row['Default'];
+            }
+
+            if ($row['Extra'] == 'auto_increment') {
+                $field['autoincrement'] = 1;
+            }
+            $result[$row['Field']] = $field;
+        }
+        if ($keys) {
+            $res = $this->query("SHOW INDEX FROM ".$table);
+            if (!$res) {
+                $this->exception();
+            }
+            $rows = array();
+            while ($row = $this->fetch_assoc($res)) {
+                if ($row['Sub_part']) {
+                    $f = array($row['Column_name'], $row['Sub_part']);
+                } else {
+                    $f = $row['Column_name'];
+                }
+                if (isset($rows[$row['Key_name']])) {
+                    $rows[$row['Key_name']]['fields'][] = $f;
+                } else {
+                    $rows[$row['Key_name']] = array(
+                        'fields' => array($f)
+                    );
+                    if ($row['Key_name'] != 'PRIMARY' && !$row['Non_unique']) {
+                        $rows[$row['Key_name']]['unique'] = 1;
+                    }
+                    if ($row['Index_type'] == 'FULLTEXT') {
+                        $rows[$row['Key_name']]['fulltext'] = 1;
+                    }
+                }
+            }
+            $result[':keys'] = $rows;
+        }
+        return $result;
     }
 
     public function createTable($table, $data)  // same as waDbMysqliAdapter
