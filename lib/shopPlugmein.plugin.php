@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/vendor/VarExportParser.php';
 use Tracy\Debugger;
 
 class shopPlugmeinPlugin extends shopPlugin
@@ -14,27 +13,17 @@ class shopPlugmeinPlugin extends shopPlugin
 
         if (!$init && wa()->getUser()->isAdmin()) {
             Debugger::enable(Debugger::DEVELOPMENT);
-            Debugger::$maxDepth = 5; // default: 3
-            Debugger::$maxLength = 400; // default: 150
-            $this->traceMysql();
-            $this->traceEvent();
-//            $this->traceSmarty();
+            Debugger::$maxDepth = 5;
+            Debugger::$maxLength = 400;
 
-            wa()->getView()->smarty->registerFilter('output', array('shopPlugmeinPlugin', 'traceSmarty'));
+            if ($this->installMysqliadapterHack() && $this->setMysqlidebugAdapter()) {
+                $this->traceMysql();
+            }
+            $this->traceEvent();
+            $this->traceSmarty();
 
             $init = true;
         }
-    }
-
-    public function headHook()
-    {
-        trigger_error("Какой-то ворнинг из PHP", E_USER_WARNING);
-        return '';
-    }
-
-    public function footerHook()
-    {
-        $this->traceEvent(false);
     }
 
     private function traceMysql()
@@ -43,49 +32,29 @@ class shopPlugmeinPlugin extends shopPlugin
         Debugger::getBar()->addPanel($panel);
     }
 
-    /**
-     * @param $source
-     * @param Smarty_Internal_Template $template
-     * @return mixed
-     */
-    public static function traceSmarty($source, $template)
-    {
-        if ($template->template_resource === 'file:index.html') {
-            shopPlugmeinPluginSmartyTrace::$ptr = Smarty_Internal_Debug::get_debug_vars($template);
-            $panel = new shopPlugmeinPluginSmartyTrace();
-            Debugger::getBar()->addPanel($panel);
-        }
 
-        return $source;
+    public function traceSmarty()
+    {
+        $panel = new shopPlugmeinPluginSmartyTrace();
+        Debugger::getBar()->addPanel($panel);
     }
 
-    /**
-     * @param bool $init
-     * @throws waException
-     */
-    private function traceEvent($init = true)
+    private function traceEvent()
     {
-        if ($init) {
-            $panel = new shopPlugmeinPluginEventTrace();
-            Debugger::getBar()->addPanel($panel);
+        $panel = new shopPlugmeinPluginEventTrace();
+        Debugger::getBar()->addPanel($panel);
 
-            setcookie("event_log_execution", 1, 0, '/');
-        } else {
-            $log = file_get_contents(waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.log');
-            $re = '/Recorded.*?(array.*?)===/ms';
-            preg_match_all($re, $log, $matches);
-            foreach ($matches[1] as $match) {
-                self::$eventTiming[] = eval('return ' . $match . ';');
-            }
-            waFiles::delete(waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.log');
-        }
+        setcookie("event_log_execution", 1, 0, '/');
     }
 
     /**
      * @return bool|void
      */
-    private function installConfigHack()
+    private function installMysqliadapterHack()
     {
+        if (class_exists('waDbMysqlidebugAdapter')) {
+            return true;
+        }
         $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
         $config = file_get_contents($config_path);
         if ($config === false || $config === '') {
@@ -93,12 +62,12 @@ class shopPlugmeinPlugin extends shopPlugin
         }
         if (false !== strpos($config, 'plugmein')) {
             // already patched
-            return;
+            return true;
         }
-        if (false !== strpos($config, 'function init')) {
-            // function already there, do not touch, use hook
-            return;
-        }
+//        if (false !== strpos($config, 'function init')) {
+//            // function already there, do not touch
+//            return true;
+//        }
         $replacement = '$1
     /* plugmein v1 */
     public function init()
@@ -112,6 +81,22 @@ class shopPlugmeinPlugin extends shopPlugin
     /* end */';
         $result = preg_replace('/(class SystemConfig extends waSystemConfig.*?{)/s', $replacement, $config);
         waFiles::write($config_path, $result);
+    }
+
+
+
+    private function setMysqlidebugAdapter()
+    {
+        $file = wa()->getConfigPath() . '/db.php';
+        $db = @include $file;
+        if ($db['default']['type'] == 'mysqlidebug') {
+            return true;
+        }
+        if ($db['default']['type'] == 'mysqli') {
+            $db['default']['type'] = 'mysqlidebug';
+            waUtils::varExportToFile($db, $file);
+        }
+        return false;
     }
 
     private function uninstallHack()
