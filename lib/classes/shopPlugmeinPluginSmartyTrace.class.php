@@ -2,10 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-class shopPlugmeinPluginSmartyTrace implements Tracy\IBarPanel
+class shopPlugmeinPluginSmartyTrace implements \Tracy\IBarPanel
 {
-
-    static $ptr;
     /**
      * Base64 icon for Tracy panel.
      * @var string
@@ -13,13 +11,12 @@ class shopPlugmeinPluginSmartyTrace implements Tracy\IBarPanel
      * @author Freepik.com
      * @license http://file000.flaticon.com/downloads/license/license.pdf
      */
-    protected static $icon = 'data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDM0Ny44NzMgMzQ3Ljg3MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzQ3Ljg3MyAzNDcuODczOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCI+CjxnPgoJPHJlY3QgeD0iNjQuMTQ4IiB5PSI3Ni42MDQiIHdpZHRoPSIyMTkuNTc2IiBoZWlnaHQ9IjM0LjI0OSIgZmlsbD0iIzAwMDAwMCIvPgoJPHJlY3QgeD0iNjQuMTQ4IiB5PSIxMzYuMzg5IiB3aWR0aD0iMTUwLjA0NiIgaGVpZ2h0PSI4MC4yMTUiIGZpbGw9IiMwMDAwMDAiLz4KCTxyZWN0IHg9IjI0Mi45MjciIHk9IjEzNi4zODkiIHdpZHRoPSI0MC43OTgiIGhlaWdodD0iODAuMjE1IiBmaWxsPSIjMDAwMDAwIi8+Cgk8cGF0aCBkPSJNMzM3Ljg3MywzMy45MzdIMTBjLTUuNTIzLDAtMTAsNC40NzctMTAsMTB2MjEwLjM5M2MwLDUuNTIzLDQuNDc3LDEwLDEwLDEwaDExNC45NzkgICBjLTQuNDA3LDIxLjQ3Ni0xNC42MDEsMzIuNTcyLTE0LjY3NCwzMi42NTFjLTIuNzkzLDIuODg1LTMuNTksNy4xNi0yLjAyMywxMC44NTdjMS41NjYsMy42OTcsNS4xOTEsNi4wOTksOS4yMDcsNi4wOTloMTEyLjg5NSAgIGM0LjAxNiwwLDcuNjQxLTIuNDAyLDkuMjA3LTYuMDk5YzEuNTY2LTMuNjk3LDAuNzctNy45NzMtMi4wMjMtMTAuODU3Yy0wLjExNy0wLjEyMi0xMC4yNzktMTEuMTc0LTE0LjY3Ni0zMi42NTFoMTE0Ljk4MSAgIGM1LjUyMywwLDEwLTQuNDc3LDEwLTEwVjQzLjkzN0MzNDcuODczLDM4LjQxNCwzNDMuMzk2LDMzLjkzNywzMzcuODczLDMzLjkzN3ogTTMyNy44NzMsMjQ0LjMyOWgtMTYuMzExdi0yLjgxNiAgIGMwLTUuNTIzLTQuNDc3LTEwLTEwLTEwcy0xMCw0LjQ3Ny0xMCwxMHYyLjgxNmgtMTAuNDM5di0yLjgxNmMwLTUuNTIzLTQuNDc3LTEwLTEwLTEwYy01LjUyMiwwLTEwLDQuNDc3LTEwLDEwdjIuODE2aC00OS43ODIgICBoLTc0LjgwOUgyMFY1My45MzdoMzA3Ljg3M1YyNDQuMzI5eiIgZmlsbD0iIzAwMDAwMCIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=';
-
+    protected static $icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAHdElNRQfjAwsPAxDxYzrHAAAAz0lEQVQoz4XPMU4CQRiG4SerW2iN8QBGYggJWNJpo4UewBuY5RoUHkBPwBWWAxAbYmjRYKEdRyAESBgb3dlFjO808828838ZfkhlRubmRjKpLY6MrfRlMn0rY7WqkPtQL1Ldp7x8fSq4AmdyD/ZcC06icCs4KNK9C4eCmyi0Bc1KZVPQijH1ZiApcmLg1X75RcdSr0g9S53tj3attcG5ta5fJCYewZNJrIs9G+/uHOPSs40dzITvNSsP/oey8LJjVxGGFmBh+Ne8hqmpRvnoC2Q8NWoALGRbAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTAzLTExVDE0OjAzOjE2KzAxOjAw/82jVgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wMy0xMVQxNDowMzoxNiswMTowMI6QG+oAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAAAAElFTkSuQmCC';
     /**
      * Title
      * @var string
      */
-    protected static $title = 'Smarty logger';
+    protected static $title = 'Smarty';
 
     /**
      * Title HTML attributes
@@ -34,20 +31,37 @@ class shopPlugmeinPluginSmartyTrace implements Tracy\IBarPanel
     protected static $time_attributes = 'style="font-weight:bold;color:#333;font-family:Courier New;font-size:1.1em"';
 
     /**
+     * Query table cell HTML attributes
+     * @var string
+     */
+    protected static $query_attributes = '';
+
+    /**
+     * mysqli logged queries
+     * @var array[]
+     */
+    protected $queries;
+
+
+    /**
+     * Get total queries execution time
+     * @return string
+     */
+    protected function getTotalTime()
+    {
+        $start = wa()->getView()->smarty->start_time;
+        return round(microtime(true) - $start, 4);
+    }
+
+    /**
      * Renders HTML code for custom tab.
      * @return string
      */
-    function getTab()
+    public function getTab()
     {
-        $html = '<img src="'.self::$icon.'" alt="mysqli queries logger" /> ';
-
-        $html .= $this->getTotalTime().'ms';
+        $html = '<img src="'.self::$icon.'" alt="smarty logger" /> ';
+        $html .= 'Smarty: '.$this->getTotalTime().'ms';
         return $html;
-    }
-
-    function getTotalTime()
-    {
-        return round(microtime(true) - wa()->getView()->smarty->start_time, 4);
     }
 
     /**
@@ -56,9 +70,30 @@ class shopPlugmeinPluginSmartyTrace implements Tracy\IBarPanel
      */
     public function getPanel()
     {
+        return;
+        $events = $this->getEvents();
+        $html = '<h1 '.self::$title_attributes.'>'.self::$title.'</h1>';
+        $html .= '<div class="tracy-inner">';
+        if (count($events) > 0) {
+            $html .= '<table style="width:400px;">';
+            $html .= '<tr>';
+            $html .= '<th>Time(ms)</td>';
+            $html .= '<th>Method</td>';
+            $html .= '</tr>';
+            foreach ($events as $event) {
+                $html .= '<tr>';
+                $html .= '<td><span '.self::$time_attributes.'>'.round($event['time'], 4).'</span></td>';
 
-        $view = wa()->getView();
-        $html = $view->fetch('eval: {debug}');
+                $html .= '<td '.self::$query_attributes.'>'.$event['class'].'::'.$event['method'].'</td>';
+
+                $html .= '</tr>';
+            }
+            $html .= '</table>';
+        } else {
+            $html .= '<p style="font-size:1.2em;font-weigt:bold;padding:10px">No events were executed!</p>';
+        }
+        $html .= '</div>';
+
         return $html;
     }
 }
