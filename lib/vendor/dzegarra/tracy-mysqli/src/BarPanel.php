@@ -60,7 +60,7 @@ class BarPanel implements \Tracy\IBarPanel
 	 */
     protected function getTotalTime()
     {
-        $time = round(array_sum(array_column($this->getQueries(), 'time')), 4);
+        $time = ceil(array_sum(array_column($this->getQueries(), 'time')) * 1000);
         return $time;
     }
 
@@ -81,7 +81,7 @@ class BarPanel implements \Tracy\IBarPanel
         } else {
             $html .= $count . ' queries';
         }
-        $html .= ' / '.$this->getTotalTime().'ms';
+        $html .= ' / '.$this->getTotalTime().' ms';
         return $html;
     }
 
@@ -105,7 +105,7 @@ class BarPanel implements \Tracy\IBarPanel
             $html .= '</tr>';
             foreach ($queries as $query) {
                 $html .= '<tr>';
-                $html .= '<td><span '.self::$time_attributes.'>'.round($query['time'], 4).'</span></td>';
+                $html .= '<td><span '.self::$time_attributes.'>'.ceil($query['time'] * 1000).'</span></td>';
                 if (class_exists('\SqlFormatter')) {
                     $html .= '<td>'.\SqlFormatter::format($query['statement']).'</td>';
                 } else {

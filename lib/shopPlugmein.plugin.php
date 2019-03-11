@@ -6,7 +6,8 @@ use Netpromotion\Profiler\Profiler;
 
 class shopPlugmeinPlugin extends shopPlugin
 {
-    public static $eventTiming;
+
+    static $templates;
 
     public function allHook($param, $name)
     {
@@ -30,12 +31,10 @@ class shopPlugmeinPlugin extends shopPlugin
             Debugger::$maxDepth = 5;
             Debugger::$maxLength = 400;
 
-            if ($this->installMysqliadapterHack() && $this->setMysqlidebugAdapter()) {
-                $this->traceMysql();
-            }
+            $this->traceMysql();
             $this->traceEvent();
-            $this->traceSmarty();
             $this->traceProfiler();
+            $this->traceSmarty();
 
             $init = true;
         }
@@ -43,18 +42,26 @@ class shopPlugmeinPlugin extends shopPlugin
 
     private function traceMysql()
     {
-        $panel = new \Dzegarra\TracyMysqli\BarPanel();
-        Debugger::getBar()->addPanel($panel);
+        if ($this->installMysqliadapterHack() && $this->setMysqlidebugAdapter()) {
+            $panel = new \Dzegarra\TracyMysqli\BarPanel();
+            Debugger::getBar()->addPanel($panel);
+        }
     }
 
-
-    public function traceSmarty()
+    private function traceSmarty()
     {
         $panel = new shopPlugmeinPluginSmartyTrace();
         Debugger::getBar()->addPanel($panel);
+        wa()->getView()->smarty->registerFilter('output', array('shopPlugmeinPlugin', 'smartyHelper'));
     }
 
-    public function traceProfiler()
+    public static function smartyHelper($source, $template)
+    {
+        self::$templates[] = $template->source->name;
+        return $source;
+    }
+
+    private function traceProfiler()
     {
         Profiler::enable();
         $panel = new Netpromotion\Profiler\Adapter\TracyBarAdapter();

@@ -61,7 +61,7 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
         preg_match_all($re, $log, $matches, PREG_SET_ORDER, 0);
 
         foreach ($matches as $match) {
-            if ($match['time'] > 0.0001) {
+            if ($match['time'] > 0.001) {
                 $events[] = ['class' => $match['class'], 'method' => $match['method'], 'time' => $match['time']];
             }
 
@@ -80,7 +80,7 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
         foreach ($this->getEvents() as $event) {
             $time += $event['time'];
         }
-        return round($time, 4);
+        return ceil($time * 1000);
     }
 
     /**
@@ -100,7 +100,7 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
         } else {
             $html .= $count . ' events';
         }
-        $html .= ' / '.$this->getTotalTime().'ms';
+        $html .= ' / '.$this->getTotalTime().' ms';
 
         return $html;
     }
@@ -122,7 +122,7 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
             $html .= '</tr>';
             foreach ($events as $event) {
                 $html .= '<tr>';
-                $html .= '<td><span '.self::$time_attributes.'>'.round($event['time'], 4).'</span></td>';
+                $html .= '<td><span '.self::$time_attributes.'>'.round($event['time'] * 1000).'</span></td>';
 
                 $html .= '<td '.self::$query_attributes.'>'.$event['class'].'::'.$event['method'].'</td>';
 

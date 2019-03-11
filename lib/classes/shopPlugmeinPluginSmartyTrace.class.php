@@ -50,7 +50,7 @@ class shopPlugmeinPluginSmartyTrace implements \Tracy\IBarPanel
     protected function getTotalTime()
     {
         $start = wa()->getView()->smarty->start_time;
-        return round(microtime(true) - $start, 4);
+        return round((microtime(true) - $start) * 1000);
     }
 
     /**
@@ -60,7 +60,7 @@ class shopPlugmeinPluginSmartyTrace implements \Tracy\IBarPanel
     public function getTab()
     {
         $html = '<img src="'.self::$icon.'" alt="smarty logger" /> ';
-        $html .= 'Smarty: '.$this->getTotalTime().'ms';
+        $html .= 'Smarty: '.$this->getTotalTime().' ms';
         return $html;
     }
 
@@ -70,30 +70,18 @@ class shopPlugmeinPluginSmartyTrace implements \Tracy\IBarPanel
      */
     public function getPanel()
     {
-        return;
-        $events = $this->getEvents();
-        $html = '<h1 '.self::$title_attributes.'>'.self::$title.'</h1>';
-        $html .= '<div class="tracy-inner">';
-        if (count($events) > 0) {
-            $html .= '<table style="width:400px;">';
+        $html = '<div class="tracy-inner"><ul>';
+        $html .= '<table style="width:400px;">';
+        $html .= '<tr>';
+        $html .= '<th>Template</td>';
+        $html .= '</tr>';
+        foreach (shopPlugmeinPlugin::$templates as $template) {
             $html .= '<tr>';
-            $html .= '<th>Time(ms)</td>';
-            $html .= '<th>Method</td>';
+            $html .= '<td><span>'.$template.'</span></td>';
             $html .= '</tr>';
-            foreach ($events as $event) {
-                $html .= '<tr>';
-                $html .= '<td><span '.self::$time_attributes.'>'.round($event['time'], 4).'</span></td>';
-
-                $html .= '<td '.self::$query_attributes.'>'.$event['class'].'::'.$event['method'].'</td>';
-
-                $html .= '</tr>';
-            }
-            $html .= '</table>';
-        } else {
-            $html .= '<p style="font-size:1.2em;font-weigt:bold;padding:10px">No events were executed!</p>';
         }
+        $html .= '</table>';
         $html .= '</div>';
-
         return $html;
     }
 }
