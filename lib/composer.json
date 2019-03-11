@@ -2,6 +2,6 @@
     "require": {
         "symfony/finder": "2.8.34",
         "dzegarra/tracy-mysqli": "^1.1",
-        "jdorn/sql-formatter": "^1.2"
+        "tracy/tracy": "2.5"
     }
 }
