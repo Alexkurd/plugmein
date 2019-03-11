@@ -2,10 +2,24 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 use Tracy\Debugger;
+use Netpromotion\Profiler\Profiler;
 
 class shopPlugmeinPlugin extends shopPlugin
 {
     public static $eventTiming;
+
+    public function allHook($param, $name)
+    {
+        static $prev_name;
+
+        if ($prev_name) {
+            Profiler::finish($prev_name);
+            $prev_name = null;
+        }
+
+        Profiler::start($name);
+        $prev_name = $name;
+    }
 
     public function routingHook()
     {
@@ -21,6 +35,7 @@ class shopPlugmeinPlugin extends shopPlugin
             }
             $this->traceEvent();
             $this->traceSmarty();
+            $this->traceProfiler();
 
             $init = true;
         }
@@ -39,6 +54,17 @@ class shopPlugmeinPlugin extends shopPlugin
         Debugger::getBar()->addPanel($panel);
     }
 
+    public function traceProfiler()
+    {
+        Profiler::enable();
+        $panel = new Netpromotion\Profiler\Adapter\TracyBarAdapter();
+        Debugger::getBar()->addPanel($panel);
+    }
+
+    /**
+     * @param bool $init
+     * @throws waException
+     */
     private function traceEvent()
     {
         $panel = new shopPlugmeinPluginEventTrace();
@@ -82,8 +108,6 @@ class shopPlugmeinPlugin extends shopPlugin
         $result = preg_replace('/(class SystemConfig extends waSystemConfig.*?{)/s', $replacement, $config);
         waFiles::write($config_path, $result);
     }
-
-
 
     private function setMysqlidebugAdapter()
     {
