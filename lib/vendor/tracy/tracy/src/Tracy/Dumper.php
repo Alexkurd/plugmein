@@ -8,6 +8,7 @@
 namespace Tracy;
 
 
+
 /**
  * Dumps a variable.
  */
@@ -21,16 +22,12 @@ class Dumper
 		LOCATION = 'location', // show location string? (defaults to 0)
 		OBJECT_EXPORTERS = 'exporters', // custom exporters for objects (defaults to Dumper::$objectexporters)
 		LIVE = 'live', // will be rendered using JavaScript
-		DEBUGINFO = 'debuginfo', // use magic method __debugInfo if exists (defaults to false)
-		KEYS_TO_HIDE = 'keystohide'; // sensitive keys not displayed (defaults to [])
+		DEBUGINFO = 'debuginfo'; // use magic method __debugInfo if exists (defaults to false)
 
 	const
 		LOCATION_SOURCE = 0b0001, // shows where dump was called
 		LOCATION_LINK = 0b0010, // appends clickable anchor
 		LOCATION_CLASS = 0b0100; // shows where class is defined
-
-	const
-		HIDDEN_VALUE = '*****';
 
 	/** @var array */
 	public static $terminalColors = [
@@ -98,12 +95,10 @@ class Dumper
 			self::COLLAPSE_COUNT => 7,
 			self::OBJECT_EXPORTERS => null,
 			self::DEBUGINFO => false,
-			self::KEYS_TO_HIDE => [],
 		];
 		$loc = &$options[self::LOCATION];
 		$loc = $loc === true ? ~0 : (int) $loc;
 
-		$options[self::KEYS_TO_HIDE] = array_flip(array_map('strtolower', $options[self::KEYS_TO_HIDE]));
 		$options[self::OBJECT_EXPORTERS] = (array) $options[self::OBJECT_EXPORTERS] + self::$objectExporters;
 		uksort($options[self::OBJECT_EXPORTERS], function ($a, $b) {
 			return $b === '' || (class_exists($a, false) && is_subclass_of($a, $b)) ? -1 : 1;
@@ -221,11 +216,10 @@ class Dumper
 			$var[$marker] = true;
 			foreach ($var as $k => &$v) {
 				if ($k !== $marker) {
-					$hide = is_string($k) && isset($options[self::KEYS_TO_HIDE][strtolower($k)]) ? self::HIDDEN_VALUE : null;
 					$k = is_int($k) || preg_match('#^\w{1,50}\z#', $k) ? $k : '"' . Helpers::escapeHtml(self::encodeString($k, $options[self::TRUNCATE])) . '"';
 					$out .= '<span class="tracy-dump-indent">   ' . str_repeat('|  ', $level) . '</span>'
 						. '<span class="tracy-dump-key">' . $k . '</span> => '
-						. ($hide ? self::dumpString($hide, $options) : self::dumpVar($v, $options, $level + 1));
+						. self::dumpVar($v, $options, $level + 1);
 				}
 			}
 			unset($var[$marker]);
@@ -278,11 +272,10 @@ class Dumper
 					$vis = ' <span class="tracy-dump-visibility">' . ($k[1] === '*' ? 'protected' : 'private') . '</span>';
 					$k = substr($k, strrpos($k, "\x00") + 1);
 				}
-				$hide = is_string($k) && isset($options[self::KEYS_TO_HIDE][strtolower($k)]) ? self::HIDDEN_VALUE : null;
 				$k = is_int($k) || preg_match('#^\w{1,50}\z#', $k) ? $k : '"' . Helpers::escapeHtml(self::encodeString($k, $options[self::TRUNCATE])) . '"';
 				$out .= '<span class="tracy-dump-indent">   ' . str_repeat('|  ', $level) . '</span>'
 					. '<span class="tracy-dump-key">' . $k . "</span>$vis => "
-					. ($hide ? self::dumpString($hide, $options) : self::dumpVar($v, $options, $level + 1));
+					. self::dumpVar($v, $options, $level + 1);
 			}
 			array_pop($list);
 			return $out . '</div>';
@@ -338,9 +331,8 @@ class Dumper
 			$var[$marker] = true;
 			foreach ($var as $k => &$v) {
 				if ($k !== $marker) {
-					$hide = is_string($k) && isset($options[self::KEYS_TO_HIDE][strtolower($k)]);
 					$k = is_int($k) || preg_match('#^\w{1,50}\z#', $k) ? $k : '"' . self::encodeString($k, $options[self::TRUNCATE]) . '"';
-					$res[] = [$k, $hide ? self::HIDDEN_VALUE : self::toJson($v, $options, $level + 1)];
+					$res[] = [$k, self::toJson($v, $options, $level + 1)];
 				}
 			}
 			unset($var[$marker]);
@@ -377,9 +369,8 @@ class Dumper
 						$vis = $k[1] === '*' ? 1 : 2;
 						$k = substr($k, strrpos($k, "\x00") + 1);
 					}
-					$hide = is_string($k) && isset($options[self::KEYS_TO_HIDE][strtolower($k)]);
 					$k = is_int($k) || preg_match('#^\w{1,50}\z#', $k) ? $k : '"' . self::encodeString($k, $options[self::TRUNCATE]) . '"';
-					$obj['items'][] = [$k, $hide ? self::HIDDEN_VALUE : self::toJson($v, $options, $level + 1), $vis];
+					$obj['items'][] = [$k, self::toJson($v, $options, $level + 1), $vis];
 				}
 			}
 			return ['object' => $obj['id']];

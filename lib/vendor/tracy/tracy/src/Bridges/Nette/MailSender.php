@@ -33,7 +33,7 @@ class MailSender
 
 
 	/**
-	 * @param  mixed  $message
+	 * @param  string|\Exception|\Throwable  $message
 	 * @param  string  $email
 	 * @return void
 	 */
@@ -43,12 +43,8 @@ class MailSender
 
 		$mail = new Nette\Mail\Message;
 		$mail->setHeader('X-Mailer', 'Tracy');
-		if ($this->fromEmail || Nette\Utils\Validators::isEmail("noreply@$host")) {
-			$mail->setFrom($this->fromEmail ?: "noreply@$host");
-		}
-		foreach (explode(',', $email) as $item) {
-			$mail->addTo(trim($item));
-		}
+		$mail->setFrom($this->fromEmail ?: "noreply@$host");
+		$mail->addTo($email);
 		$mail->setSubject('PHP: An error occurred on the server ' . $host);
 		$mail->setBody(Tracy\Logger::formatMessage($message) . "\n\nsource: " . Tracy\Helpers::getSource());
 

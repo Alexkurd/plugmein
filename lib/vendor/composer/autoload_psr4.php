@@ -7,5 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
+    'PetrKnap\\Php\\Singleton\\' => array($vendorDir . '/petrknap/php-singleton/src/Singleton'),
+    'PetrKnap\\Php\\Profiler\\' => array($vendorDir . '/petrknap/php-profiler/src'),
+    'Netpromotion\\Profiler\\' => array($vendorDir . '/netpromotion/profiler/src/Profiler'),
     'Dzegarra\\TracyMysqli\\' => array($vendorDir . '/dzegarra/tracy-mysqli/src'),
 );

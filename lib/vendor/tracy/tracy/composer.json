@@ -20,7 +20,6 @@
 		"ext-json": "*"
 	},
 	"require-dev": {
-		"nette/utils": "~2.3",
 		"nette/di": "~2.3",
 		"nette/tester": "~1.7"
 	},

@@ -15,6 +15,15 @@ class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
         array (
             'Symfony\\Component\\Finder\\' => 25,
         ),
+        'P' => 
+        array (
+            'PetrKnap\\Php\\Singleton\\' => 23,
+            'PetrKnap\\Php\\Profiler\\' => 22,
+        ),
+        'N' => 
+        array (
+            'Netpromotion\\Profiler\\' => 22,
+        ),
         'D' => 
         array (
             'Dzegarra\\TracyMysqli\\' => 21,
@@ -26,6 +35,18 @@ class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
+        'PetrKnap\\Php\\Singleton\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/petrknap/php-singleton/src/Singleton',
+        ),
+        'PetrKnap\\Php\\Profiler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/petrknap/php-profiler/src',
+        ),
+        'Netpromotion\\Profiler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/netpromotion/profiler/src/Profiler',
+        ),
         'Dzegarra\\TracyMysqli\\' => 
         array (
             0 => __DIR__ . '/..' . '/dzegarra/tracy-mysqli/src',
@@ -33,7 +54,6 @@ class ComposerStaticInit1f0c44814b88bbc65a5fcb384755a6a2
     );
 
     public static $classMap = array (
-        'SqlFormatter' => __DIR__ . '/..' . '/jdorn/sql-formatter/lib/SqlFormatter.php',
         'Tracy\\Bar' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/Bar.php',
         'Tracy\\BlueScreen' => __DIR__ . '/..' . '/tracy/tracy/src/Tracy/BlueScreen.php',
         'Tracy\\Bridges\\Nette\\Bridge' => __DIR__ . '/..' . '/tracy/tracy/src/Bridges/Nette/Bridge.php',

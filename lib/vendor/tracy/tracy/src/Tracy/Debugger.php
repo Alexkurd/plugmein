@@ -15,7 +15,7 @@ use ErrorException;
  */
 class Debugger
 {
-	const VERSION = '2.5.4';
+	const VERSION = '2.5.0';
 
 	/** server modes for Debugger::enable() */
 	const
@@ -416,7 +416,7 @@ class Debugger
 			self::exceptionHandler($e);
 		}
 
-		$message = 'PHP ' . Helpers::errorTypeToString($severity) . ': ' . Helpers::improveError($message, $context);
+		$message = 'PHP ' . Helpers::errorTypeToString($severity) . ": $message";
 		$count = &self::getBar()->getPanel('Tracy:errors')->data["$file|$line|$message"];
 
 		if ($count++) { // repeated error
@@ -596,7 +596,7 @@ class Debugger
 
 	/**
 	 * Logs message or exception.
-	 * @param  mixed  $message
+	 * @param  string|\Exception|\Throwable  $message
 	 * @return mixed
 	 */
 	public static function log($message, $priority = ILogger::INFO)

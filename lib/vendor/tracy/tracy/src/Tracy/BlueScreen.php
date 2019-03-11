@@ -25,9 +25,6 @@ class BlueScreen
 	/** @var int  */
 	public $maxLength = 150;
 
-	/** @var string[] */
-	public $keysToHide = ['password', 'passwd', 'pass', 'pwd', 'creditcard', 'credit card', 'cc', 'pin'];
-
 	/** @var callable[] */
 	private $panels = [];
 
@@ -99,7 +96,7 @@ class BlueScreen
 		if ($handle = @fopen($file, 'x')) {
 			ob_start(); // double buffer prevents sending HTTP headers in some PHP
 			ob_start(function ($buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
-			$this->renderTemplate($exception, __DIR__ . '/assets/BlueScreen/page.phtml', false);
+			$this->renderTemplate($exception, __DIR__ . '/assets/BlueScreen/page.phtml');
 			ob_end_flush();
 			ob_end_clean();
 			fclose($handle);
@@ -107,7 +104,7 @@ class BlueScreen
 	}
 
 
-	private function renderTemplate($exception, $template, $toScreen = true)
+	private function renderTemplate($exception, $template)
 	{
 		$messageHtml = preg_replace(
 			'#\'\S[^\']*\S\'|"\S[^"]*\S"#U',
@@ -121,27 +118,20 @@ class BlueScreen
 			? Helpers::errorTypeToString($exception->getSeverity())
 			: Helpers::getClass($exception);
 		$lastError = $exception instanceof \ErrorException || $exception instanceof \Error ? null : error_get_last();
-
-		$keysToHide = array_flip(array_map('strtolower', $this->keysToHide));
-		$dump = function ($v, $k = null) use ($keysToHide) {
-			if (is_string($k) && isset($keysToHide[strtolower($k)])) {
-				$v = Dumper::HIDDEN_VALUE;
-			}
+		$dump = function ($v) {
 			return Dumper::toHtml($v, [
 				Dumper::DEPTH => $this->maxDepth,
 				Dumper::TRUNCATE => $this->maxLength,
 				Dumper::LIVE => true,
 				Dumper::LOCATION => Dumper::LOCATION_CLASS,
-				Dumper::KEYS_TO_HIDE => $this->keysToHide,
 			]);
 		};
+		$nonce = Helpers::getNonce();
 		$css = array_map('file_get_contents', array_merge([
 			__DIR__ . '/assets/BlueScreen/bluescreen.css',
 		], Debugger::$customCssFiles));
 		$css = preg_replace('#\s+#u', ' ', implode($css));
-
-		$nonce = $toScreen ? Helpers::getNonce() : null;
-		$actions = $toScreen ? $this->renderActions($exception) : [];
+		$actions = $this->renderActions($exception);
 
 		require $template;
 	}
@@ -191,28 +181,14 @@ class BlueScreen
 			}
 		}
 
-		if (property_exists($ex, 'tracyAction') && !empty($ex->tracyAction['link']) && !empty($ex->tracyAction['label'])) {
+		if (!empty($ex->tracyAction['link']) && !empty($ex->tracyAction['label'])) {
 			$actions[] = $ex->tracyAction;
 		}
 
-		if (preg_match('# ([\'"])(\w{3,}(?:\\\\\w{3,})+)\\1#i', $ex->getMessage(), $m)) {
-			$class = $m[2];
-			if (
-				!class_exists($class) && !interface_exists($class) && !trait_exists($class)
-				&& ($file = Helpers::guessClassFile($class)) && !is_file($file)
-			) {
-				$actions[] = [
-					'link' => Helpers::editorUri($file, 1, 'create'),
-					'label' => 'create class',
-				];
-			}
-		}
-
 		if (preg_match('# ([\'"])((?:/|[a-z]:[/\\\\])\w[^\'"]+\.\w{2,5})\\1#i', $ex->getMessage(), $m)) {
-			$file = $m[2];
 			$actions[] = [
-				'link' => Helpers::editorUri($file, 1, $label = is_file($file) ? 'open' : 'create'),
-				'label' => $label . ' file',
+				'link' => Helpers::editorUri($m[2], 1, $tmp = is_file($m[2]) ? 'open' : 'create'),
+				'label' => $tmp . ' file',
 			];
 		}
 

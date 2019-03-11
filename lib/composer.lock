@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9a28385271e62d11c60380579ecfb4c",
+    "content-hash": "2fdd4bf3a8e2916bad6e45d9f52e184a",
     "packages": [
         {
             "name": "dzegarra/tracy-mysqli",
@@ -52,35 +52,43 @@
             "time": "2017-02-24T11:34:36+00:00"
         },
         {
-            "name": "jdorn/sql-formatter",
-            "version": "v1.2.17",
+            "name": "netpromotion/profiler",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jdorn/sql-formatter.git",
-                "reference": "64990d96e0959dff8e059dfcdc1af130728d92bc"
+                "url": "https://github.com/netpromotion/profiler.git",
+                "reference": "a3c0a625c2dba9a03e1c738e51fe05d24909bb7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jdorn/sql-formatter/zipball/64990d96e0959dff8e059dfcdc1af130728d92bc",
-                "reference": "64990d96e0959dff8e059dfcdc1af130728d92bc",
+                "url": "https://api.github.com/repos/netpromotion/profiler/zipball/a3c0a625c2dba9a03e1c738e51fe05d24909bb7e",
+                "reference": "a3c0a625c2dba9a03e1c738e51fe05d24909bb7e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.4"
+                "petrknap/php-profiler": "^1.1",
+                "petrknap/php-singleton": "^1.0",
+                "php": ">=5.4"
+            },
+            "conflict": {
+                "nette/di": "<2.2 || >=3",
+                "tracy/tracy": "<2.2 || >=3"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "laravel/lumen-framework": "^5.0",
+                "latte/latte": "^2.3",
+                "netpromotion/tracy-wrapper": "^1.0",
+                "nette/application": "^2.3",
+                "nette/bootstrap": "^2.3",
+                "nette/di": "*",
+                "phpunit/phpunit": "^4.8",
+                "tracy/tracy": "*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
             "autoload": {
-                "classmap": [
-                    "lib"
-                ]
+                "psr-4": {
+                    "Netpromotion\\Profiler\\": "src/Profiler"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -88,18 +96,94 @@
             ],
             "authors": [
                 {
-                    "name": "Jeremy Dorn",
-                    "email": "jeremy@jeremydorn.com",
-                    "homepage": "http://jeremydorn.com/"
+                    "name": "Petr Knap",
+                    "email": "knap@netpromotion.cz"
                 }
             ],
-            "description": "a PHP SQL highlighting library",
-            "homepage": "https://github.com/jdorn/sql-formatter/",
-            "keywords": [
-                "highlight",
-                "sql"
+            "description": "Profiler with adapter for Tracy",
+            "time": "2016-10-05T09:25:18+00:00"
+        },
+        {
+            "name": "petrknap/php-profiler",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/petrknap/php-profiler.git",
+                "reference": "39fb47fb0fbdbc678128a046fd1c5e8d71064595"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/petrknap/php-profiler/zipball/39fb47fb0fbdbc678128a046fd1c5e8d71064595",
+                "reference": "39fb47fb0fbdbc678128a046fd1c5e8d71064595",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PetrKnap\\Php\\Profiler\\": "src"
+                },
+                "files": []
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
             ],
-            "time": "2014-01-12T16:20:24+00:00"
+            "authors": [
+                {
+                    "name": "Petr Knap",
+                    "email": "dev@petrknap.cz"
+                }
+            ],
+            "description": "PHP profiler",
+            "homepage": "https://petrknap.github.io/docs/php-profiler.html",
+            "time": "2017-05-29T10:14:28+00:00"
+        },
+        {
+            "name": "petrknap/php-singleton",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/petrknap/php-singleton.git",
+                "reference": "dec131d0d6c72dd76b5a5c7940f04f14f5df7a20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/petrknap/php-singleton/zipball/dec131d0d6c72dd76b5a5c7940f04f14f5df7a20",
+                "reference": "dec131d0d6c72dd76b5a5c7940f04f14f5df7a20",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PetrKnap\\Php\\Singleton\\": "src/Singleton"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Petr Knap",
+                    "email": "dev@petrknap.cz",
+                    "homepage": "http://petrknap.cz"
+                }
+            ],
+            "description": "Singleton pattern for PHP",
+            "homepage": "https://github.com/petrknap/php-singleton",
+            "time": "2016-09-22T07:59:18+00:00"
         },
         {
             "name": "symfony/finder",
@@ -152,16 +236,16 @@
         },
         {
             "name": "tracy/tracy",
-            "version": "v2.5.5",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tracy.git",
-                "reference": "35fa649b483b28e16f61de07110ea0585fc8d6ea"
+                "reference": "534d4e4f0f31da494026a3761fad020c20b8debf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tracy/zipball/35fa649b483b28e16f61de07110ea0585fc8d6ea",
-                "reference": "35fa649b483b28e16f61de07110ea0585fc8d6ea",
+                "url": "https://api.github.com/repos/nette/tracy/zipball/534d4e4f0f31da494026a3761fad020c20b8debf",
+                "reference": "534d4e4f0f31da494026a3761fad020c20b8debf",
                 "shasum": ""
             },
             "require": {
@@ -171,8 +255,7 @@
             },
             "require-dev": {
                 "nette/di": "~2.3",
-                "nette/tester": "~1.7",
-                "nette/utils": "~2.3"
+                "nette/tester": "~1.7"
             },
             "suggest": {
                 "https://nette.org/donate": "Please support Tracy via a donation"
@@ -214,7 +297,7 @@
                 "nette",
                 "profiler"
             ],
-            "time": "2018-11-05T15:10:59+00:00"
+            "time": "2018-05-25T09:33:08+00:00"
         }
     ],
     "packages-dev": [],

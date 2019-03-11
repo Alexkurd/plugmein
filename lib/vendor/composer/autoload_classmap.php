@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'SqlFormatter' => $vendorDir . '/jdorn/sql-formatter/lib/SqlFormatter.php',
     'Tracy\\Bar' => $vendorDir . '/tracy/tracy/src/Tracy/Bar.php',
     'Tracy\\BlueScreen' => $vendorDir . '/tracy/tracy/src/Tracy/BlueScreen.php',
     'Tracy\\Bridges\\Nette\\Bridge' => $vendorDir . '/tracy/tracy/src/Bridges/Nette/Bridge.php',

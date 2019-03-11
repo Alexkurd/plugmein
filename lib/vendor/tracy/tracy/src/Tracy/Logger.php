@@ -13,10 +13,10 @@ namespace Tracy;
  */
 class Logger implements ILogger
 {
-	/** @var string|null name of the directory where errors should be logged */
+	/** @var string name of the directory where errors should be logged */
 	public $directory;
 
-	/** @var string|array|null email or emails to which send error notifications */
+	/** @var string|array email or emails to which send error notifications */
 	public $email;
 
 	/** @var string|null sender of email notifications */
@@ -32,10 +32,6 @@ class Logger implements ILogger
 	private $blueScreen;
 
 
-	/**
-	 * @param  string|null  $directory
-	 * @param  string|array|null  $email
-	 */
 	public function __construct($directory, $email = null, BlueScreen $blueScreen = null)
 	{
 		$this->directory = $directory;
@@ -47,8 +43,8 @@ class Logger implements ILogger
 
 	/**
 	 * Logs message or exception to file and sends email notification.
-	 * @param  mixed  $message
-	 * @param  string  $priority  one of constant ILogger::INFO, WARNING, ERROR (sends email), EXCEPTION (sends email), CRITICAL (sends email)
+	 * @param  string|\Exception|\Throwable  $message
+	 * @param  int  $priority  one of constant ILogger::INFO, WARNING, ERROR (sends email), EXCEPTION (sends email), CRITICAL (sends email)
 	 * @return string|null logged error filename
 	 */
 	public function log($message, $priority = self::INFO)
@@ -106,7 +102,7 @@ class Logger implements ILogger
 
 
 	/**
-	 * @param  mixed  $message
+	 * @param  string|\Exception|\Throwable  $message
 	 * @return string
 	 */
 	public static function formatLogLine($message, $exceptionFile = null)
@@ -159,7 +155,7 @@ class Logger implements ILogger
 
 
 	/**
-	 * @param  mixed  $message
+	 * @param  string|\Exception|\Throwable  $message
 	 * @return void
 	 */
 	protected function sendEmail($message)
@@ -181,7 +177,7 @@ class Logger implements ILogger
 
 	/**
 	 * Default mailer.
-	 * @param  mixed  $message
+	 * @param  string|\Exception|\Throwable  $message
 	 * @param  string  $email
 	 * @return void
 	 * @internal
