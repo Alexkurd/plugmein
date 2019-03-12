@@ -43,7 +43,7 @@ class shopPlugmeinPlugin extends shopPlugin
 
     private function traceMysql()
     {
-        if ($this->installMysqliadapterHack() && $this->setMysqlidebugAdapter()) {
+        if (class_exists('waDbMysqlidebugAdapter')) {
             $panel = new \Dzegarra\TracyMysqli\BarPanel();
             Debugger::getBar()->addPanel($panel);
         }
@@ -92,9 +92,6 @@ class shopPlugmeinPlugin extends shopPlugin
      */
     private function installMysqliadapterHack()
     {
-        if (class_exists('waDbMysqlidebugAdapter')) {
-            return true;
-        }
         $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
         $config = file_get_contents($config_path);
         if ($config === false || $config === '') {
@@ -137,8 +134,42 @@ class shopPlugmeinPlugin extends shopPlugin
         return false;
     }
 
-    private function uninstallHack()
+    public function saveSettings($settings = array())
     {
+        if (empty($settings['debugbar'])) {
+            $this->uninstallHacks();
+        } else {
+            $this->installMysqliadapterHack();
+            $this->setMysqlidebugAdapter();
+        }
+        parent::saveSettings($settings);
+    }
 
+
+    private function uninstallHacks()
+    {
+        $file = wa()->getConfigPath() . '/db.php';
+        $db = @include $file;
+        if ($db['default']['type'] == 'mysqlidebug') {
+            $db['default']['type'] = 'mysqli';
+            waUtils::varExportToFile($db, $file);
+        }
+
+        $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
+        $config = file_get_contents($config_path);
+
+        $remove = '/* plugmein v1 */
+    public function init()
+    {
+        if (!waRequest::param("mysqlidebug")) {
+            require __DIR__ . "/../wa-apps/shop/plugins/plugmein/lib/classes/waDbMysqlidebugAdapter.class.php";
+            waRequest::setParam("mysqlidebug", 1);
+        }
+        parent::init();
+    }
+    /* end */';
+        $result = str_replace($remove, '', $config);
+
+        waFiles::write($config_path, $result);
     }
 }
