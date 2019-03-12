@@ -35,6 +35,7 @@ class shopPlugmeinPlugin extends shopPlugin
             $this->traceEvent();
             $this->traceProfiler();
             $this->traceSmarty();
+            $this->traceSettings();
 
             $init = true;
         }
@@ -65,6 +66,12 @@ class shopPlugmeinPlugin extends shopPlugin
     {
         Profiler::enable();
         $panel = new Netpromotion\Profiler\Adapter\TracyBarAdapter();
+        Debugger::getBar()->addPanel($panel);
+    }
+
+    private function traceSettings()
+    {
+        $panel = new shopPlugmeinPluginSettingsTrace();
         Debugger::getBar()->addPanel($panel);
     }
 
