@@ -26,7 +26,7 @@ class shopPlugmeinPlugin extends shopPlugin
     {
         static $init;
 
-        if (!$init && wa()->getUser()->isAdmin()) {
+        if (!$init && wa()->getUser()->isAdmin() && $this->getSettings('debugbar')) {
             Debugger::enable(Debugger::DEVELOPMENT);
             Debugger::$maxDepth = 5;
             Debugger::$maxLength = 400;

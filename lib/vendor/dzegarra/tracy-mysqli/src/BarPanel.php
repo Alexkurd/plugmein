@@ -104,14 +104,16 @@ class BarPanel implements \Tracy\IBarPanel
             $html .= '<th>Statement</td>';
             $html .= '</tr>';
             foreach ($queries as $query) {
-                $html .= '<tr>';
-                $html .= '<td><span '.self::$time_attributes.'>'.ceil($query['time'] * 1000).'</span></td>';
-                if (class_exists('\SqlFormatter')) {
-                    $html .= '<td>'.\SqlFormatter::format($query['statement']).'</td>';
-                } else {
-                    $html .= '<td '.self::$query_attributes.'>'.$query['statement'].'</td>';
+                if (!wa()->getPlugin('plugmein')->getSettings('long_queries') || $query['time'] > 0.001) {
+                    $html .= '<tr>';
+                    $html .= '<td><span '.self::$time_attributes.'>'.ceil($query['time'] * 1000).'</span></td>';
+                    if (class_exists('\SqlFormatter')) {
+                        $html .= '<td>'.\SqlFormatter::format($query['statement']).'</td>';
+                    } else {
+                        $html .= '<td '.self::$query_attributes.'>'.$query['statement'].'</td>';
+                    }
+                    $html .= '</tr>';
                 }
-                $html .= '</tr>';
             }
             $html .= '</table>';
         } else {

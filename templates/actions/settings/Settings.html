@@ -18,6 +18,9 @@ hr.plugmein { clear: none;}
             <li>
                 <a href="#" data-tab-id ='diag'>[`Diagnose`]</a>
             </li>
+            <li>
+                <a href="#" data-tab-id ='settings'>[`Settings`]</a>
+            </li>
         </ul>
         <div class="tab-content">
             <!--plugins.tab-->
@@ -74,6 +77,12 @@ hr.plugmein { clear: none;}
                 <input type="button" class="button green" id="diag-run-check" value="[`Start`]" />
                 <img id="diag-loading-check" style="margin-top:8px; display: none" src="{$wa_url}wa-content/img/loading32.gif">
             </div>
+
+            <!--settings.tab-->
+            <div class="block" data-tabcontent-id="settings">
+                {include file="../../../../../templates/actions/plugins/PluginsSettings.html"}
+            </div>
+
         </div>
     </div>
 </div>

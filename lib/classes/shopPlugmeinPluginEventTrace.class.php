@@ -61,10 +61,9 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
         preg_match_all($re, $log, $matches, PREG_SET_ORDER, 0);
 
         foreach ($matches as $match) {
-            if ($match['time'] > 0.001) {
+            if (!wa()->getPlugin('plugmein')->getSettings('long_events') || $match['time'] > 0.001) {
                 $events[] = ['class' => $match['class'], 'method' => $match['method'], 'time' => $match['time']];
             }
-
         }
         waFiles::delete($file);
         return $events;

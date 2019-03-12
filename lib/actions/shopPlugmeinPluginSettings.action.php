@@ -76,5 +76,36 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         //Check installer rights
         $installer = ($this->getUser()->getRights('installer', 'settings')&&wa()->appExists('installer'));
         $this->view->assign('installer', $installer);
+
+        $this->addSettingsVars();
+    }
+
+    private function addSettingsVars()
+    {
+        $plugin_id = 'plugmein';
+        $vars = array();
+
+        /**
+         * @var shopPlugin $plugin
+         */
+        $plugin = waSystem::getInstance()->getPlugin($plugin_id, true);
+        $namespace = wa()->getApp().'_'.$plugin_id;
+
+        $params = array();
+        $params['id'] = $plugin_id;
+        $params['namespace'] = $namespace;
+        $params['title_wrapper'] = '%s';
+        $params['description_wrapper'] = '<br><span class="hint">%s</span>';
+        $params['control_wrapper'] = '<div class="name">%s</div><div class="value">%s %s</div>';
+
+        $settings_controls = $plugin->getControls($params);
+
+        $vars['plugin_info'] = array(
+            'name' => ''
+        );
+        $vars['plugin_id'] = $plugin_id;
+        $vars['settings_controls'] = $settings_controls;
+
+        $this->view->assign($vars);
     }
 }
