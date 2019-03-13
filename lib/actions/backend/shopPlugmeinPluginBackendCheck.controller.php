@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . "/../../vendor/autoload.php");
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Symfony\Component\Finder\Finder;
 
@@ -51,7 +51,9 @@ class shopPlugmeinPluginBackendCheckController extends waLongActionController
         }
         $finder->name('.files.md5');
         foreach ($finder as $file) {
+            /** @var array $parsed */
             $parsed = $this->parseFile($file->getContents(), $file->getRealPath());
+            /** @noinspection SlowArrayOperationsInLoopInspection */
             $this->data['files'] = array_merge($this->data['files'], $parsed);
         }
         $this->data['memory'] = memory_get_peak_usage();
@@ -60,11 +62,12 @@ class shopPlugmeinPluginBackendCheckController extends waLongActionController
 
     private function parseFile($contents, $path)
     {
+        $result = [];
         $re = '/([a-f0-9]{32}) \*(.*)/';
-        preg_match_all($re, $contents, $matches, PREG_SET_ORDER, 0);
+        preg_match_all($re, $contents, $matches, PREG_SET_ORDER);
         foreach ($matches as $k => $m) {
-            $result[$k]["hash"] = $m[1];
-            $result[$k]["path"] = dirname($path).DIRECTORY_SEPARATOR.$m[2];
+            $result[$k]['hash'] = $m[1];
+            $result[$k]['path'] = dirname($path).DIRECTORY_SEPARATOR.$m[2];
         }
         return $result;
     }
