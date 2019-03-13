@@ -21,6 +21,4 @@ class waDbMysqlidebugAdapter extends waDbMysqliAdapter
         }
         return $handler;
     }
-
-
 }

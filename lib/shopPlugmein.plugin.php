@@ -44,7 +44,7 @@ class shopPlugmeinPlugin extends shopPlugin
     private function traceMysql()
     {
         if (class_exists('waDbMysqlidebugAdapter')) {
-            $panel = new \Dzegarra\TracyMysqli\BarPanel();
+            $panel = new shopPlugmeinPluginMysqliTrace();
             Debugger::getBar()->addPanel($panel);
         }
     }
@@ -136,7 +136,7 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public function saveSettings($settings = array())
     {
-        if (empty($settings['debugbar'])) {
+        if (empty($settings['mysql'])) {
             $this->uninstallHacks();
         } else {
             $this->installMysqliadapterHack();
