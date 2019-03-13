@@ -55,16 +55,18 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
         }
 
         $file = waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.log';
+        $backup = waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.all.log';
         $log = file_get_contents($file);
 
         $re = '/\'class\' => \'(?<class>\w*)\'.*?0 => \'(?<method>\w*).*?\'execution_time\' => (?<time>[0-9\.]*)/s';
         preg_match_all($re, $log, $matches, PREG_SET_ORDER, 0);
 
-        foreach ($matches as $match) {
-            if (!wa()->getPlugin('plugmein')->getSettings('long_events') || $match['time'] > 0.001) {
-                $events[] = ['class' => $match['class'], 'method' => $match['method'], 'time' => $match['time']];
+        foreach ($matches as $m) {
+            if (!wa()->getPlugin('plugmein')->getSettings('long_events') || $m['time'] > 0.001) {
+                $events[] = ['class' => $m['class'], 'method' => $m['method'], 'time' => $m['time']];
             }
         }
+        file_put_contents($backup, $log, FILE_APPEND);
         waFiles::delete($file);
         return $events;
     }

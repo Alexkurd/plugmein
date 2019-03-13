@@ -78,6 +78,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         $this->view->assign('installer', $installer);
 
         $this->addSettingsVars();
+        $this->addEventsInfo();
     }
 
     private function addSettingsVars()
@@ -107,5 +108,41 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         $vars['settings_controls'] = $settings_controls;
 
         $this->view->assign($vars);
+    }
+
+    private function addEventsInfo()
+    {
+        $log = @file_get_contents(waConfig::get('wa_path_log') . '/webasyst/waEventExecutionTime.all.log');
+        if (!$log) {
+            return;
+        }
+
+        $re = '/\'class\' => \'(?<class>\w*)\'.*?0 => \'(?<method>\w*).*?\'execution_time\' => (?<time>[0-9\.]*)/s';
+        preg_match_all($re, $log, $matches, PREG_SET_ORDER, 0);
+
+        $classes = $methods = [];
+        foreach ($matches as $m) {
+            $classes[$m['class']] = ifset($classes[$m['class']]) + $m['time'];
+            $methods[$m['class'] . '::' . $m['method']] = ifset($methods[$m['class'] . '::' . $m['method']]) + $m['time'];
+        }
+        arsort($classes);
+        arsort($methods);
+
+        $this->view->assign('classes', $classes);
+        $this->view->assign('methods', $methods);
+    }
+
+    public static function classToLink($class)
+    {
+        $chunks = preg_split('/(?=[A-Z])/', $class);
+        $app = array_shift($chunks);
+        if (wa()->appExists($app)) {
+            $link = "apps/$app/";
+        }
+        if (end($chunks) == 'Plugin') {
+            $plugin = strtolower($chunks[0]);
+            $link = "plugins/$app/$plugin/";
+        }
+        return $link;
     }
 }
