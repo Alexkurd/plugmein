@@ -32,9 +32,7 @@ class Mysqli extends \mysqli
     {
         $start = microtime(true);
         $result = parent::query($query, $resultmode);
-        $time = microtime(true) - $start;
-        $this->addLog($query, $time);
-        $this->addSlowLog($query, $time);
+        $this->addLog($query, microtime(true) - $start);
         return $result;
     }
 
@@ -49,27 +47,6 @@ class Mysqli extends \mysqli
             'time' => $time
         ];
         array_push(self::$log, $entry);
-    }
-
-    public function addSlowLog($query, $time)
-    {
-        if ($time > 0.5) {
-            $classes = [];
-            foreach (debug_backtrace(0, 15) as $call) {
-                if (empty($call['class'])
-                    || stripos($call['class'], 'mysql')
-                    || stripos($call['class'], 'model')) {
-                    continue;
-                }
-                if ($call['class'] == 'Smarty_Internal_TemplateBase') {
-                    $classes[] = $call['class'] . " ({$call['args'][0]})";
-                } else {
-                    $classes[] = $call['class'];
-                }
-            }
-            $debug = implode(' -> ', $classes);
-            \waLog::log(round($time, 2) . "s - $debug \n$query", 'mysql-slow.log');
-        }
     }
 
     /**

@@ -70,6 +70,9 @@ class shopPlugmeinPluginSmartyTrace implements \Tracy\IBarPanel
      */
     public function getPanel()
     {
+        if (empty(shopPlugmeinPlugin::$templates)) {
+            return '';
+        }
         $html = '<div class="tracy-inner">';
         $html .= '<table style="width:400px;">';
         $html .= '<tr>';

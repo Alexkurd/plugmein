@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/shopPlugmeinPluginMysqli.class.php';
 
 class waDbMysqlidebugAdapter extends waDbMysqliAdapter
 {
@@ -8,7 +9,7 @@ class waDbMysqlidebugAdapter extends waDbMysqliAdapter
     {
         $host = $settings['host'];
         $port = isset($settings['port']) ? $settings['port'] : ini_get("mysqli.default_port");
-        $handler = @new \Dzegarra\TracyMysqli\Mysqli($host, $settings['user'], $settings['password'], $settings['database'], $port);
+        $handler = @new shopPlugmeinPluginMysqli($host, $settings['user'], $settings['password'], $settings['database'], $port);
         if ($handler->connect_error) {
             throw new waDbException($handler->connect_error, $handler->connect_errno);
         }
