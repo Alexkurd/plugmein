@@ -42,11 +42,6 @@ class shopPlugmeinPluginEventTrace implements \Tracy\IBarPanel
      */
     protected $queries;
 
-    /**
-     * Retrieve from {@link Mysqli} the list of queries executed so far and return the list.
-     * @return array[]
-     * @throws waException
-     */
     public function getEvents()
     {
         static $events;

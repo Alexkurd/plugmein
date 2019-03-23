@@ -58,8 +58,8 @@ class shopPlugmeinPlugin extends shopPlugin
 
     private function traceEvent()
     {
-        $panel = new shopPlugmeinPluginEventTrace();
-        Debugger::getBar()->addPanel($panel);
+//        $panel = new shopPlugmeinPluginEventTrace();
+//        Debugger::getBar()->addPanel($panel);
 
         setcookie("event_log_execution", 1, 0, '/');
     }
@@ -67,7 +67,7 @@ class shopPlugmeinPlugin extends shopPlugin
     private function traceProfiler()
     {
         Profiler::enable();
-        $panel = new Netpromotion\Profiler\Adapter\TracyBarAdapter();
+        $panel = new shopPlugmeinPluginProfileTrace();
         Debugger::getBar()->addPanel($panel);
     }
 

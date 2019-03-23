@@ -29,7 +29,7 @@ class shopPlugmeinPluginMysqli extends \Dzegarra\TracyMysqli\Mysqli
                     || stripos($call['class'], 'model')) {
                     continue;
                 }
-                if ($call['class'] == 'Smarty_Internal_TemplateBase') {
+                if ($call['class'] == 'Smarty_Internal_TemplateBase' && isset($call['args'][0]) && is_string($call['args'][0])) {
                     $classes[] = $call['class'] . " ({$call['args'][0]})";
                 } else {
                     $classes[] = $call['class'];
