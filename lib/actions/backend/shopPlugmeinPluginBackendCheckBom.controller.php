@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Symfony\Component\Finder\Finder;
 
-class shopPlugmeinPluginBackendCheckController extends waLongActionController
+class shopPlugmeinPluginBackendCheckBomController extends waLongActionController
 {
 
     protected function preExecute()
@@ -37,7 +37,7 @@ class shopPlugmeinPluginBackendCheckController extends waLongActionController
         $root = wa()->getConfig()->getRootPath();
         $finder
             ->files()
-            ->name('.files.md5')
+            ->name('*.php')
             ->ignoreDotFiles(false)
             ->ignoreUnreadableDirs()
             ->in($root.DIRECTORY_SEPARATOR.'wa-apps')
@@ -52,7 +52,6 @@ class shopPlugmeinPluginBackendCheckController extends waLongActionController
         foreach ($finder as $file) {
             /** @var array $parsed */
             $parsed = $this->parseFile($file->getContents(), $file->getRealPath());
-            /** @noinspection SlowArrayOperationsInLoopInspection */
             $this->data['files'] = array_merge($this->data['files'], $parsed);
         }
         $this->data['memory'] = memory_get_peak_usage();

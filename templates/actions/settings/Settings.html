@@ -180,9 +180,8 @@ body.night .s-plugmein-panel{ background: var(--main-bg-color); box-shadow: none
             },
             step: {
                 onReady: function (response) {
-                    $("#diag-run-check").after(response.report);
+                    $("#diag-run-check").after(response.report).show();;
                     $("#diag-loading-check").hide();
-                    $("#diag-run-check").show();
                 }
             }
         });

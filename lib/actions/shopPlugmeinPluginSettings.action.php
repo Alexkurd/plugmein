@@ -38,7 +38,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         $plugin_info = array();
         $app_config = wa()->getConfig()->getAppConfig('shop');
         $path = $app_config->getConfigPath('plugins.php', true);
-        $plugin_php = include($path);
+        $plugin_php = include $path;
         $plugin_all = $this->getList();
         $unlisted = array_diff_key(array_flip($plugin_all), $plugin_php);
         if (count($unlisted)>0) {
