@@ -16,8 +16,7 @@ class shopPlugmeinPluginMysqliTrace extends \Dzegarra\TracyMysqli\BarPanel imple
      */
     protected function getTotalTime()
     {
-        $time = ceil(array_sum(array_column($this->getQueries(), 'time')) * 1000);
-        return $time;
+        return ceil(array_sum(array_column($this->getQueries(), 'time')) * 1000);
     }
 
     /**
@@ -44,6 +43,7 @@ class shopPlugmeinPluginMysqliTrace extends \Dzegarra\TracyMysqli\BarPanel imple
     /**
      * Renders HTML code for custom panel.
      * @return string
+     * @throws waException
      */
     public function getPanel()
     {

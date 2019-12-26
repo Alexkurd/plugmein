@@ -1,52 +1,76 @@
-<style>
-hr.plugmein { clear: none;}
-.disabled { color: gray;text-decoration: line-through;}
-.plugmein tr:hover { box-shadow: inset 0px 0px 0px 1px #7D6A6A;}
-.s-plugmein-panel { display: block;position: fixed;bottom: 0;left: 0;right: 0;background: #fff;box-shadow: 0 -6px 10px -10px #AAAAAA;z-index: 1052;padding-left: 40%;}
-body.night .s-plugmein-panel{ background: var(--main-bg-color); box-shadow: none;}
-</style>
+{literal}
+    <style>
+        hr.plugmein {clear: none;}
+        .disabled {color: gray; text-decoration: line-through;}
+        .plugmein tr:hover {box-shadow: inset 0 0 0 1px #7D6A6A;}
+        .s-plugmein-panel {display: block; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; box-shadow: 0 -6px 10px -10px #AAAAAA;
+            z-index: 1052;
+            padding-left: 40%;
+        }
+
+        body.night .s-plugmein-panel {
+            background: var(--main-bg-color);
+            box-shadow: none;
+        }
+    </style>
+    <div class="float-right">
+        <a href="https://www.patreon.com/bePatron?u=25425773" target="_blank">
+            <i class="icon16 dollar"></i>[`Donate`]</a>
+    </div>
+{/literal}
 <div id="s-plugmein-form" class="plugmein">
     <h2>[`Plugin Manager`]</h2>
     <div class="block fields form">
-        <span id = "plugmein-error"></span>
+        <span id="plugmein-error"></span>
         <ul class="tabs">
             <li>
-                <a href="#" data-tab-id ='plugins'>[s`Plugins`]</a>
+                <a href="#" data-tab-id='plugins'>[s`Plugins`]</a>
             </li>
             <li>
-                <a href="#" data-tab-id ='hooks'>[`Hooks`]</a>
+                <a href="#" data-tab-id='hooks'>[`Hooks`]</a>
             </li>
             <li>
-                <a href="#" data-tab-id ='diag'>[`Diagnose`]</a>
+                <a href="#" data-tab-id='diag'>[`Diagnose`]</a>
             </li>
             <li>
-                <a href="#" data-tab-id ='settings'>[`Settings`]</a>
+                <a href="#" data-tab-id='settings'>[`Settings`]</a>
             </li>
         </ul>
         <div class="tab-content">
             <!--plugins.tab-->
             <div class="block" data-tabcontent-id="plugins">
-                <button class = "button" id="plugmein-checkAll" title="[`Select all`]">☑</button>| 
-                <button class = "button" id="plugmein-uncheckAll" title="[`Select none`]">☐</button>
-                <a href="?plugin=plugmein&id=savelist" class="float-right" id="plugmein-savelist" title="[`Save list`]"><i class="icon16 download"></i>[`Save list`]</a>
+                <button class="button" id="plugmein-checkAll" title="[`Select all`]">☑</button>
+                |
+                <button class="button" id="plugmein-uncheckAll" title="[`Select none`]">☐</button>
+                <a href="?plugin=plugmein&id=savelist" class="float-right" id="plugmein-savelist" title="[`Save list`]">
+                    <i class="icon16 download"></i>[`Save list`]
+                </a>
                 <hr class="plugmein">
-                <form id="plugmein-form" method="POST" action="?plugin=plugmein"> 
-                {if empty($plugin_list)}
-                    <h3> [`No plugins available`]</h3> 
-                {else}
-                    {$wa->csrf()}
-                    <table class="zebra plugmein"> 
-                        {foreach $plugin_list as $plugin}
-                            <tr {if !$plugin.active}class="disabled"{/if}>
-                                <td><input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1" {if $plugin.active}checked="checked"{/if}></td>
-                                <td><label for="{$plugin.id}">&nbsp;{$plugin.name|default: $plugin.id|escape}&nbsp;<span> {$plugin.description|default: ''|escape}</span></label></td>
-                                {if $installer}
-                                <td class="nowrap"><span class="float-right"><a title="{$plugin.name|default: $plugin.id}" href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/" target="_blank">{_wp("Go to Installer")}</a></span></td>
-                                {/if}
-                            </tr>
-                        {/foreach}
-                    </table>
-                {/if}
+                <form id="plugmein-form" method="POST" action="?plugin=plugmein">
+                    {if empty($plugin_list)}
+                        <h3> [`No plugins available`]</h3>
+                    {else}
+                        {$wa->csrf()}
+                        <table class="zebra plugmein">
+                            {foreach $plugin_list as $plugin}
+                                <tr {if !$plugin.active}class="disabled"{/if}>
+                                    <td>
+                                        <input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1"
+                                               {if $plugin.active}checked="checked"{/if}></td>
+                                    <td><label for="{$plugin.id}">&nbsp;{$plugin.name|default: $plugin.id|escape}
+                                            &nbsp;<span> {$plugin.description|default: ''|escape}</span></label></td>
+                                    {if $installer}
+                                        <td class="nowrap">
+                                            <span class="float-right"><a
+                                                        title="{$plugin.name|default: $plugin.id}"
+                                                        href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/"
+                                                        target="_blank">{_wp("Go to Installer")}</a>
+                                            </span></td>
+                                    {/if}
+                                </tr>
+                            {/foreach}
+                        </table>
+                    {/if}
                     <hr class="plugmein">
                     <div class="block bordered-top s-plugmein-panel">
                         <input type="submit" class="green button" value="[`Save`]">
@@ -61,12 +85,15 @@ body.night .s-plugmein-panel{ background: var(--main-bg-color); box-shadow: none
                         <tr>
                             <td>{$hook}</td>
                             <td>{if is_array($plugin)}
-                                {foreach $plugin as $handler}
-                                    {$plugin_list[$handler].name|default:$plugin_list[$handler].id}<br>
-                                {/foreach}
-                            {else}
-                                {$plugin_list[$plugin].name|default:$plugin_list[$plugin].id}
-                            {/if}
+                                    {foreach $plugin as $handler}
+                                        <span {if !$plugin.active}class="disabled"{/if}>
+                                            {$plugin_list[$handler].name|default:$plugin_list[$handler].id}
+                                        </span>
+                                        <br>
+                                    {/foreach}
+                                {else}
+                                    {$plugin_list[$plugin].name|default:$plugin_list[$plugin].id}
+                                {/if}
                             </td>
                         </tr>
                     {/foreach}
@@ -74,49 +101,54 @@ body.night .s-plugmein-panel{ background: var(--main-bg-color); box-shadow: none
             </div>
             <!--diag.tab-->
             <div class="block" data-tabcontent-id="diag">
-                <h3>Проверить оригинальность файлов исходного кода</h3>
-                <script src="{$wa_app_static_url}plugins/plugmein/js/kmlongaction.js" type="text/javascript"></script>
-                <input type="button" class="button green" id="diag-run-check" value="[`Start`]" />
-                <img id="diag-loading-check" style="margin-top:8px; display: none" src="{$wa_url}wa-content/img/loading32.gif"><br><br>
+                <h3>[`Test checksums`]</h3> //Проверить оригинальность файлов исходного кода
+                <script async defer src="{$wa_app_static_url}plugins/plugmein/js/kmlongaction.js" type="text/javascript"></script>
+                <input type="button" class="button green" id="diag-run-check" value="[`Start`]"/>
+                <img id="diag-loading-check" style="margin-top:8px; display: none"
+                     src="{$wa_static_url}wa-content/img/loading32.gif"><br><br>
 
                 {if isset($classes)}
-                    <h3>Общее время исполнения хуков за всю хранимую историю</h3>
-                <div>
-                    <table class="zebra">
-                        <tr>
-                            <td>Class</td>
-                            <td>Time (s)</td>
-                        </tr>
-                        {foreach $classes as $c => $time}
-                        <tr>
-                            {if shopPlugmeinPluginSettingsAction::classToLink($c)}
-                                <td><a href="{$wa_backend_url}installer/#/{shopPlugmeinPluginSettingsAction::classToLink($c)}">{$c}</a></td>
-                            {else}
-                                <td>{$c}</td>
-                            {/if}
+                    <h3>[`Hooks history total time`]</h3>Общее время исполнения хуков за всю хранимую историю
+                    <div>
+                        <table class="zebra">
+                            <tr>
+                                <td>Class</td>
+                                <td>Time (s)</td>
+                            </tr>
+                            {foreach $classes as $c => $time}
+                                <tr>
+                                    {if shopPlugmeinPluginSettingsAction::classToLink($c)}
+                                        <td>
+                                            <a href="{$wa_backend_url}installer/#/{shopPlugmeinPluginSettingsAction::classToLink($c)}">{$c}</a>
+                                        </td>
+                                    {else}
+                                        <td>{$c}</td>
+                                    {/if}
 
-                            <td>{$time}</td>
-                        </tr>
-                        {/foreach}
-                    </table>
-                </div><br><br>
+                                    <td>{$time}</td>
+                                </tr>
+                            {/foreach}
+                        </table>
+                    </div>
+                    <br>
+                    <br>
                 {/if}
 
                 {if isset($methods)}
-                <div>
-                    <table class="zebra">
-                        <tr>
-                            <td>Method</td>
-                            <td>Time (s)</td>
-                        </tr>
-                        {foreach $methods as $m => $time}
+                    <div>
+                        <table class="zebra">
                             <tr>
-                                <td>{$m}</td>
-                                <td>{$time}</td>
+                                <td>Method</td>
+                                <td>Time (s)</td>
                             </tr>
-                        {/foreach}
-                    </table>
-                </div>
+                            {foreach $methods as $m => $time}
+                                <tr>
+                                    <td>{$m}</td>
+                                    <td>{$time}</td>
+                                </tr>
+                            {/foreach}
+                        </table>
+                    </div>
                 {/if}
 
             </div>
@@ -129,61 +161,60 @@ body.night .s-plugmein-panel{ background: var(--main-bg-color); box-shadow: none
         </div>
     </div>
 </div>
-
+{literal}
 <script>
-/*global $*/
-    
-    $('#s-plugmein-form').on('click', 'a[data-tab-id]', function(e) {
-        e.preventDefault();
-        $('a[data-tab-id]').parent().removeClass('selected');
-        $(this).parent().addClass('selected');
-        $('div[data-tabcontent-id]','.tab-content').hide();
-        $('div[data-tabcontent-id='+$(this).data('tab-id')+']','.tab-content').show();
-    });
-    
-    $('a[data-tab-id]:first','#s-plugmein-form').trigger('click');
-    
-    $('#plugmein-checkAll').click(function() {
+    /*global $*/
+
+    $('#plugmein-checkAll').click(function () {
         $('#plugmein-form input[type="checkbox"]').prop('checked', true);
     });
 
-    $('#plugmein-uncheckAll').click(function() {
+    $('#plugmein-uncheckAll').click(function () {
         $('#plugmein-form input[type="checkbox"]').prop('checked', false);
     });
 
-    $('#plugmein-form').on('submit', function(e){
+    $('#s-plugmein-form').on('click', 'a[data-tab-id]', function (e) {
         e.preventDefault();
-        var fields = $(this).serializeArray();
+        $('a[data-tab-id]').parent().removeClass('selected');
+        $(this).parent().addClass('selected');
+        $('div[data-tabcontent-id]', '.tab-content').hide();
+        $('div[data-tabcontent-id=' + $(this).data('tab-id') + ']', '.tab-content').show();
+    }).on('submit', function (e) {
+        e.preventDefault();
+        let fields = $(this).serializeArray();
         fields.push({ "name": 'id', "value": 'run'});
         /* Because serializeArray() ignores unset checkboxes and radio buttons: */
         fields = fields.concat(
             $('input[type=checkbox]:not(:checked)', $(this)).map(
-                    function() {
-                        return { "name": this.name, "value": 0};
-                    }).get()
+                function () {
+                    return { "name": this.name, "value": 0};
+                }).get()
         );
-        $.post($(this).attr('action'), fields).done(function(){
-            $.plugins.dispatch('#/plugmein/', true);
+        $.post($(this).attr('action'), fields).done(function () {
+            window.location.reload();
         });
     });
-    
+
     $("#diag-run-check").click(function (e) {
         $.wa.kmLongAction().start({
             process_url: '?plugin=plugmein&action=check',
             debug: true,
             start: {
                 onStart: function () {
-                    $('.errormsg','[data-tabcontent-id="diag"]').empty();
+                    $('.errormsg', '[data-tabcontent-id="diag"]').empty();
                     $("#diag-run-check").hide();
                     $("#diag-loading-check").show();
                 }
             },
             step: {
                 onReady: function (response) {
-                    $("#diag-run-check").after(response.report).show();;
+                    $("#diag-run-check").after(response.report).show();
                     $("#diag-loading-check").hide();
                 }
             }
         });
     });
+
+    $('a[data-tab-id]:first', '#s-plugmein-form').trigger('click');
 </script>
+{/literal}

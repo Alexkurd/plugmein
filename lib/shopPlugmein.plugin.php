@@ -8,7 +8,17 @@ use Tracy\Debugger;
 class shopPlugmeinPlugin extends shopPlugin
 {
 
-    static $templates;
+    public static $templates;
+
+    public function sendStat()
+    {
+        $sendStat = $this->getSettings('send_stats');
+        if ($sendStat) {
+            $metrics = new shopPlugmeinMetrics();
+            $metrics->sendBeacon();
+        }
+        return ['sidebar_bottom_li'=>''];
+    }
 
     public static function smartyHelper($source, $template)
     {
@@ -33,7 +43,7 @@ class shopPlugmeinPlugin extends shopPlugin
     {
         static $init;
 
-        if (!$init && wa()->getUser()->isAdmin() && $this->getSettings('debugbar')) {
+        if (!$init && $this->getSettings('debugbar') && wa()->getUser()->isAdmin()) {
             Debugger::enable(Debugger::DEVELOPMENT);
             Debugger::$maxDepth = 5;
             Debugger::$maxLength = 400;
@@ -58,10 +68,7 @@ class shopPlugmeinPlugin extends shopPlugin
 
     private function traceEvent()
     {
-//        $panel = new shopPlugmeinPluginEventTrace();
-//        Debugger::getBar()->addPanel($panel);
-
-        setcookie("event_log_execution", 1, 0, '/');
+        setcookie('event_log_execution', 1, 0, '/');
     }
 
     private function traceProfiler()
@@ -98,7 +105,7 @@ class shopPlugmeinPlugin extends shopPlugin
     {
         $file = wa()->getConfigPath() . '/db.php';
         $db = @include $file;
-        if ($db['default']['type'] == 'mysqlidebug') {
+        if ($db['default']['type'] === 'mysqlidebug') {
             $db['default']['type'] = 'mysqli';
             waUtils::varExportToFile($db, $file);
         }
@@ -106,7 +113,7 @@ class shopPlugmeinPlugin extends shopPlugin
         $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
         $config = file_get_contents($config_path);
 
-        $remove = '/* plugmein v1 */
+        $remove = '/* plugmein v3 */
     public function init()
     {
         if (!waRequest::param("mysqlidebug")) {
@@ -117,7 +124,6 @@ class shopPlugmeinPlugin extends shopPlugin
     }
     /* end */';
         $result = str_replace($remove, '', $config);
-
         waFiles::write($config_path, $result);
     }
 
@@ -136,7 +142,7 @@ class shopPlugmeinPlugin extends shopPlugin
             return;
         } else {
             $replacement = '$1
-    /* plugmein v1 */
+    /* plugmein v3 */
     public function init()
     {
         if (!waRequest::param("mysqlidebug")) {

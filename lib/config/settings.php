@@ -2,27 +2,34 @@
 
 return [
     'debugbar' => [
-        'title' => 'Включить панель отладки',
+        'title' => 'Enable debug bar', //Включить панель отладки
         'description' => '',
         'control_type' => waHtmlControl::CHECKBOX,
         'value' => 0,
     ],
-    'mysql' => [
-        'title' => 'Включить обработку запросов к базе данных',
+    'long_events' => [
+        'title' => 'Show only long events', //Показывать только долгие события
+        'description' => '',
+        'control_type' => waHtmlControl::CHECKBOX,
+        'value' => 1,
+    ],
+    'send_stats' => [
+        'title' => 'Send anonymous stats',
+        'description' => '',
+        'control_type' => waHtmlControl::CHECKBOX,
+        'value' => 1,
+    ],
+    /* //Uncomment for VPS
+     * 'mysql' => [
+        'title' => 'Enable database query logging', //Включить обработку запросов к базе данных
         'description' => '',
         'control_type' => waHtmlControl::CHECKBOX,
         'value' => 1,
     ],
     'long_queries' => [
-        'title' => 'Показывать только долгие запросы к базе данных',
+        'title' => 'Show only long DB queries', //
         'description' => '',
         'control_type' => waHtmlControl::CHECKBOX,
         'value' => 1,
-    ],
-    'long_events' => [
-        'title' => 'Показывать только долгие события',
-        'description' => '',
-        'control_type' => waHtmlControl::CHECKBOX,
-        'value' => 1,
-    ],
+    ],*/
 ];

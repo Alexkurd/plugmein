@@ -10,7 +10,9 @@ class shopPlugmeinMetrics
     private $data = [];
     private $id; //uuid
     private $mysql_version;
-    const DEMOLLC_STAT_SERVER = 'https://demollc.pw/stat/';
+    private $last_stat;
+    const DEMOLLC_STAT_SERVER = 'https://stat.demollc.pw/';
+    const period = 604800;
 
     public function __construct()
     {
@@ -20,19 +22,24 @@ class shopPlugmeinMetrics
             $id = waString::uuid();
             $model->set('shop.plugmein', 'uuid', $id);
         }
+        $this->last_stat = $model->get('shop.plugmein', 'last_date');
         $this->id = $id;
     }
 
     public function sendBeacon()
     {
-        $data = $this->getData();
-        $options = [
-            'format' => waNet::FORMAT_JSON,
-            'request_format' => waNet::FORMAT_JSON,
-            'timeout' => '5',
-        ];
-        $net = new waNet($options);
-        $net->query(self::DEMOLLC_STAT_SERVER, $data, waNet::METHOD_PUT);
+        if ($this->checkDate()) {
+            $data = $this->getData();
+            $options = [
+                'format' => waNet::FORMAT_JSON,
+                'request_format' => waNet::FORMAT_JSON,
+                'timeout' => '5',
+            ];
+            $net = new waNet($options);
+            $net->query(self::DEMOLLC_STAT_SERVER, $data, waNet::METHOD_POST);
+            $model = new waAppSettingsModel();
+            $model->set('shop.plugmein', 'last_date', time());
+        }
     }
 
     /**
@@ -128,15 +135,6 @@ class shopPlugmeinMetrics
     }
 
     /**
-     * @return void
-     */
-    public function previewData()
-    {
-        $this->getData();
-        print_r($this->data);
-    }
-
-    /**
      * @return mixed|null
      * @throws waDbException
      * @throws waException
@@ -158,5 +156,10 @@ class shopPlugmeinMetrics
     protected function mb4IsSupported()
     {
         return version_compare($this->mysql_version, '5.5.3', '>=');
+    }
+
+    private function checkDate()
+    {
+        return empty($this->last_stat)||$this->last_stat+$this::period > time();
     }
 }

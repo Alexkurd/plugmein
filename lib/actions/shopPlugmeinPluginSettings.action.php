@@ -17,9 +17,9 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
     private function getOffInfo($id)
     {
         $app_config = wa()->getConfig()->getAppConfig('shop');
-        $plugin_config = $app_config->getPluginPath($id)."/lib/config/plugin.php";
+        $plugin_config = $app_config->getPluginPath($id). '/lib/config/plugin.php';
         if (!file_exists($plugin_config)) {
-            return;
+            return false;
         }
         $plugin_info = include($plugin_config);
         foreach (array('name', 'description') as $field) {
@@ -35,7 +35,6 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         if (!$this->getUser()->getRights('shop', 'settings')) {
             throw new waException(_w('Access denied'));
         }
-        $plugin_info = array();
         $app_config = wa()->getConfig()->getAppConfig('shop');
         $path = $app_config->getConfigPath('plugins.php', true);
         $plugin_php = include $path;
@@ -56,7 +55,7 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
         if (empty($plugin_info) || empty($handlers_raw)) {
             $handlers_raw = array();
             foreach ($plugin_php as $key => $state) {
-                if ($key!='plugmein') {
+                if ($key!=='plugmein') {
                     $plugin_info[$key] = $this->getOffInfo($key);
                     $plugin_info[$key]['id'] = $key;
                     $plugin_info[$key]['active'] = $state;
@@ -134,12 +133,13 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
 
     public static function classToLink($class)
     {
+        $link = '';
         $chunks = preg_split('/(?=[A-Z])/', $class);
         $app = array_shift($chunks);
         if (wa()->appExists($app)) {
             $link = "apps/$app/";
         }
-        if (end($chunks) == 'Plugin') {
+        if (end($chunks) === 'Plugin') {
             $plugin = strtolower($chunks[0]);
             $link = "plugins/$app/$plugin/";
         }
