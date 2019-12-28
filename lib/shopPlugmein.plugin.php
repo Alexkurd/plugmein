@@ -7,9 +7,11 @@ use Tracy\Debugger;
 
 class shopPlugmeinPlugin extends shopPlugin
 {
-
     public static $templates;
 
+    /**
+     * @return array
+     */
     public function sendStat()
     {
         $sendStat = $this->getSettings('send_stats');
@@ -26,6 +28,10 @@ class shopPlugmeinPlugin extends shopPlugin
         return $source;
     }
 
+    /**
+     * @param $param
+     * @param $name
+     */
     public function allHook($param, $name)
     {
         static $prev_name;
@@ -93,6 +99,9 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public function saveSettings($settings = array())
     {
+//        if (empty($settings['long_events'])) {
+//            wa()->getResponse()->setCookie('event_log_execution', '0', 0);
+//        }
         if (empty($settings['mysql'])) {
             self::uninstallHacks();
         } else {
@@ -103,6 +112,9 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public static function uninstallHacks()
     {
+        if (waConfig::get('is_template')) {
+            throw new waException('shopPlugmein:: is not allowed in template context');
+        }
         $file = wa()->getConfigPath() . '/db.php';
         $db = @include $file;
         if ($db['default']['type'] === 'mysqlidebug') {
@@ -129,14 +141,17 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public static function installHacks()
     {
+        if (waConfig::get('is_template')) {
+            throw new waException('shopPlugmein:: is not allowed in template context');
+        }
         $config_path = wa()->getConfigPath() . '/SystemConfig.class.php';
         $config = file_get_contents($config_path);
         if ($config === false || $config === '') {
             return;
         }
-        if (false !== strpos($config, 'plugmein')) {
+        if (strpos($config, 'plugmein') !== false) {
             // already patched
-        } elseif (false !== strpos($config, 'function init')) {
+        } elseif (strpos($config, 'function init') !== false) {
             // function already there, do not touch'
             waLog::log("Can't patch, init method already exists");
             return;
@@ -156,10 +171,10 @@ class shopPlugmeinPlugin extends shopPlugin
             if (waFiles::write($config_path, $result)) {
                 $file = wa()->getConfigPath() . '/db.php';
                 $db = @include $file;
-                if ($db['default']['type'] == 'mysqlidebug') {
+                if ($db['default']['type'] === 'mysqlidebug') {
                     return;
                 }
-                if ($db['default']['type'] == 'mysqli') {
+                if ($db['default']['type'] === 'mysqli') {
                     $db['default']['type'] = 'mysqlidebug';
                     waUtils::varExportToFile($db, $file);
                 }

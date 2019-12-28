@@ -78,6 +78,10 @@ class shopPlugmeinPluginSettingsAction extends waViewAction
 
         $this->addSettingsVars();
         $this->addEventsInfo();
+        $plugin = wa('shop')->getPlugin('plugmein');
+        if (!$plugin->getSettings('long_events')) {
+            wa()->getResponse()->setCookie('event_log_execution', '0', 0);
+        }
     }
 
     private function addSettingsVars()
