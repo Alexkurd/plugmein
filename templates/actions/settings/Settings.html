@@ -53,11 +53,13 @@
                         {$wa->csrf()}
                         <table class="zebra plugmein">
                             {foreach $plugin_list as $plugin}
-                                <tr {if !$plugin.active} class="disabled"{/if}>
-                                    <td>
+                                <tr>
+                                    <td ><label {if !$plugin.active} class="disabled"{/if} for="{$plugin.id}">&nbsp;
                                         <input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1"
-                                               {if $plugin.active}checked="checked"{/if}></td>
-                                    <td><label for="{$plugin.id}">&nbsp;{$plugin.name|default: $plugin.id|escape}
+                                               {if $plugin.active}checked="checked"{/if}>
+                                            {$plugin.name|default: $plugin.id|escape}
+                                    {*</td>
+                                    <td>*}
                                             &nbsp;<span> {$plugin.description|default: ''|escape}</span></label></td>
                                     {if $installer}
                                         <td class="nowrap">
@@ -86,13 +88,16 @@
                             <td>{$hook}</td>
                             <td>{if is_array($plugin)}
                                     {foreach $plugin as $handler}
-                                        <span {if !$plugin.active}class="disabled"{/if}>
+                                        <span {if !$plugin_list[$handler]['active']|default:false}class="disabled"{/if}>
                                             {$plugin_list[$handler].name|default:$plugin_list[$handler].id}
                                         </span>
                                         <br>
                                     {/foreach}
                                 {else}
+                                <span {if !$plugin_list[$plugin]['active']|default:false}class="disabled"{/if}>
                                     {$plugin_list[$plugin].name|default:$plugin_list[$plugin].id}
+                                    -
+                                </span>
                                 {/if}
                             </td>
                         </tr>
@@ -165,7 +170,6 @@
 <script>
     /*global $*/
     let plugmeinForm = $('#plugmein-form');
-    let fields = plugmeinForm.serializeArray();
 
     $('#plugmein-checkAll').click(function () {
         $('input[type="checkbox"]', plugmeinForm).prop('checked', true);
@@ -183,15 +187,18 @@
         $('div[data-tabcontent-id=' + $(this).data('tab-id') + ']', '.tab-content').show();
     });
     plugmeinForm.on('submit', function (e) {
+        let fields = plugmeinForm.serializeArray();
         e.preventDefault();
         fields.push({ "name": 'id', "value": 'run'});
         /* Because serializeArray() ignores unset checkboxes and radio buttons: */
+        console.log(fields);
         fields = fields.concat(
             $('input[type=checkbox]:not(:checked)', plugmeinForm).map(
                 function () {
                     return { "name": this.name, "value": 0};
                 }).get()
         );
+        console.log(fields);
         $.post(plugmeinForm.attr('action'), fields).done(function () {
             window.location.reload();
         });
