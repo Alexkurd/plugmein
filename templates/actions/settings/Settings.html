@@ -58,14 +58,12 @@
                                         <input type="checkbox" name="{$plugin.id}" id="{$plugin.id}" value="1"
                                                {if $plugin.active}checked="checked"{/if}>
                                             {$plugin.name|default: $plugin.id|escape}
-                                    {*</td>
-                                    <td>*}
                                             &nbsp;<span> {$plugin.description|default: ''|escape}</span></label></td>
                                     {if $installer}
                                         <td class="nowrap">
                                             <span class="float-right"><a
                                                         title="{$plugin.name|default: $plugin.id}"
-                                                        href="{$wa_backend_url}installer/#/plugins/shop/{$plugin.id}/"
+                                                        href="{$wa_backend_url}installer/store/plugin/shop/{$plugin.id}/"
                                                         target="_blank">{_wp("Go to Installer")}</a>
                                             </span></td>
                                     {/if}
@@ -111,7 +109,12 @@
                 <input type="button" class="button green" id="diag-run-check" value="[`Start`]"/>
                 <img id="diag-loading-check" style="margin-top:8px; display: none"
                      src="{$wa_static_url}wa-content/img/loading32.gif"><br><br>
-
+                {*
+                <h3>[`Test BOM`]</h3>
+                <input type="button" class="button green" id="bom-run-check" value="[`Start`]"/>
+                <img id="bom-loading-check" style="margin-top:8px; display: none"
+                     src="{$wa_static_url}wa-content/img/loading32.gif"><br><br>
+                *}
                 {if isset($classes)}
                     <h3>[`Hooks history total time`]</h3>
                     <div>
@@ -219,6 +222,26 @@
                 onReady: function (response) {
                     $("#diag-run-check").after(response.report).show();
                     $("#diag-loading-check").hide();
+                }
+            }
+        });
+    });
+
+    $("#bom-run-check").click(function (e) {
+        $.wa.kmLongAction().start({
+            process_url: '?plugin=plugmein&action=checkbom',
+            debug: true,
+            start: {
+                onStart: function () {
+                    $('.errormsg', '[data-tabcontent-id="diag"]').empty();
+                    $("#bom-run-check").hide();
+                    $("#bom-loading-check").show();
+                }
+            },
+            step: {
+                onReady: function (response) {
+                    $("#bom-run-check").after(response.report).show();
+                    $("#bom-loading-check").hide();
                 }
             }
         });

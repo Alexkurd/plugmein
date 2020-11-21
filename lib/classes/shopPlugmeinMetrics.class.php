@@ -3,6 +3,7 @@
 /**
  * Class shopPlugmeinMetrics
  * Send anonymous user stats
+ * @depecated since 3.1
  */
 class shopPlugmeinMetrics
 {

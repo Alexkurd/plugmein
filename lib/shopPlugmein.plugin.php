@@ -31,9 +31,13 @@ class shopPlugmeinPlugin extends shopPlugin
     /**
      * @param $param
      * @param $name
+     * @return bool
      */
     public function allHook($param, $name)
     {
+        if (PHP_SAPI === 'cli') {
+            return false;
+        }
         static $prev_name;
 
         if ($prev_name) {
@@ -47,6 +51,9 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public function routingHook()
     {
+        if (PHP_SAPI === 'cli') {
+            return false;
+        }
         static $init;
 
         if (!$init && $this->getSettings('debugbar') && wa()->getUser()->isAdmin()) {
@@ -180,5 +187,12 @@ class shopPlugmeinPlugin extends shopPlugin
                 }
             }
         }
+    }
+
+    public static function cliLog($params)
+    {
+        $message = (isset($params['successful_execution'])?'End ':'Start ')
+            .json_encode($params);
+        waLog::log($message, 'cli.log');
     }
 }

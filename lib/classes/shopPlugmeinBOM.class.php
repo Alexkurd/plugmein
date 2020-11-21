@@ -83,12 +83,11 @@ class shopPlugmeinBOM
             if ($others != '') {
                 $fs = explode(',', trim($others));
                 foreach ($fs as $f) {
-                    if (strlen($f)) {
+                    if ($f !== '') {
                         $types[] = trim(str_ireplace('.', '', $f));
                     }
                 }
             }
-            //cleanFilesHtml();
         }
     }
 }
