@@ -1,10 +1,9 @@
 <?php
 
 return array(
-    'name' => /*_wp*/
-        'PlugMein',
+    'name' => /*_wp*/'PlugMein',
     'icon' => 'img/plugmein.png',
-    'version' => '3.1',
+    'version' => '2021.9.0',
     'vendor' => '991739',
     'description' => 'Plugin Manager',
     'shop_settings' => true,
