@@ -191,8 +191,18 @@ class shopPlugmeinPlugin extends shopPlugin
 
     public static function cliLog($params)
     {
-        $message = (isset($params['successful_execution'])?'End ':'Start ')
-            .json_encode($params);
-        waLog::log($message, 'cli.log');
+        $data = [];
+        $file = wa()->getConfig()->getPath('log').'/cli.log';
+        if (file_exists($file)) {
+            try {
+                $data = include $file;
+                if (!is_array($data)) {
+                    $data = [];
+                }
+            } catch (exception $e){}
+        }
+        $stage = isset($params['successful_execution'])?'End':'Start';
+        $data[$params['app']][$params['class']][$stage] = wa_date('fulldatetime');
+        waUtils::varExportToFile($data, $file);
     }
 }
